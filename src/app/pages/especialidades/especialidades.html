@@ -1,1 +1,61 @@
-<h1>Especialidades</h1>
+<div class="especialidades">
+
+  <div class="especialidades__header">
+    <h1 class="especialidades__title">Especialidades</h1>
+    <button class="btn-primary" (click)="abrirModal()">+ Nova especialidade</button>
+  </div>
+
+  <div class="especialidades__section">
+    @if (especialidades.length === 0) {
+      <p class="especialidades__empty">Nenhuma especialidade cadastrada.</p>
+    } @else {
+      <table class="especialidades__table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of especialidades; track e.id) {
+            <tr>
+              <td class="especialidades__name">{{ e.nome }}</td>
+              <td>{{ e.descricao ?? '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>
+
+@if (showModal) {
+  <div class="modal-overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">Nova especialidade</h2>
+
+      <div class="modal__form">
+        <div class="modal__field">
+          <label class="modal__label">Nome <span class="modal__required">*</span></label>
+          <input class="modal__input" type="text" [(ngModel)]="form.nome" placeholder="Ex: Ortodontia" />
+        </div>
+        <div class="modal__field">
+          <label class="modal__label">Descrição</label>
+          <textarea class="modal__textarea" [(ngModel)]="form.descricao" placeholder="Descrição opcional..." rows="3"></textarea>
+        </div>
+
+        @if (erro) {
+          <p class="modal__error">{{ erro }}</p>
+        }
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-primary" [disabled]="salvando" (click)="salvar()">
+          {{ salvando ? 'Salvando...' : 'Cadastrar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
