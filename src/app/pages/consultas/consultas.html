@@ -1,1 +1,167 @@
-<h1>Consultas</h1>
+<div class="consultas">
+
+  <div class="consultas__header">
+    <h1 class="consultas__title">Consultas</h1>
+    <button class="btn-primary" (click)="abrirModalNova()">+ Nova consulta</button>
+  </div>
+
+  <div class="consultas__filters">
+    <input
+      class="consultas__filter-input"
+      type="text"
+      placeholder="Paciente"
+      [(ngModel)]="filtroNomePaciente"
+    />
+    <input
+      class="consultas__filter-input"
+      type="text"
+      placeholder="Dentista"
+      [(ngModel)]="filtroNomeDentista"
+    />
+    <select class="consultas__filter-input" [(ngModel)]="filtroStatus">
+      <option value="">Todos os status</option>
+      <option value="AGENDADA">Agendada</option>
+      <option value="FINALIZADA">Finalizada</option>
+      <option value="CANCELADA">Cancelada</option>
+    </select>
+    <input class="consultas__filter-input" type="date" [(ngModel)]="filtroData" />
+    <button class="consultas__filter-clear" (click)="limparFiltros()">Limpar</button>
+  </div>
+
+  <div class="consultas__section">
+    @if (consultasFiltradas.length === 0) {
+      <p class="consultas__empty">Nenhuma consulta encontrada.</p>
+    } @else {
+      <table class="consultas__table">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Dentista</th>
+            <th>Data início</th>
+            <th>Data fim</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of consultasFiltradas; track c.id) {
+            <tr>
+              <td class="consultas__patient">{{ getNomePaciente(c) }}</td>
+              <td>{{ getNomeDentista(c) }}</td>
+              <td>{{ c.dataInicio | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ c.dataFim | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span class="pill pill--{{ c.status | lowercase }}">{{ c.status }}</span>
+              </td>
+              <td class="consultas__actions">
+                @if (c.status === 'AGENDADA') {
+                  <button class="btn-action btn-action--danger" (click)="abrirModalCancelar(c)">
+                    Cancelar
+                  </button>
+                  <button class="btn-action btn-action--success" (click)="finalizar(c)">
+                    Finalizar
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>
+
+@if (showModalNova) {
+  <div class="modal-overlay" (click)="fecharModalNova()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">Nova consulta</h2>
+
+      <div class="modal__form">
+        <div class="modal__field">
+          <label class="modal__label">Paciente</label>
+          <select class="modal__input" [(ngModel)]="novaConsulta.idPaciente">
+            <option [ngValue]="null">Selecione...</option>
+            @for (p of pacientes; track p.id) {
+              <option [ngValue]="p.id">{{ p.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">Dentista</label>
+          <select class="modal__input" [(ngModel)]="novaConsulta.idDentista">
+            <option [ngValue]="null">Selecione...</option>
+            @for (d of dentistas; track d.id) {
+              <option [ngValue]="d.id">{{ d.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">Descrição</label>
+          <textarea
+            class="modal__input modal__textarea"
+            [(ngModel)]="novaConsulta.descricao"
+            placeholder="Motivo da consulta..."
+          ></textarea>
+        </div>
+
+        <div class="modal__row">
+          <div class="modal__field">
+            <label class="modal__label">Data início</label>
+            <input class="modal__input" type="datetime-local" [(ngModel)]="novaConsulta.dataInicio" />
+          </div>
+          <div class="modal__field">
+            <label class="modal__label">Data fim</label>
+            <input class="modal__input" type="datetime-local" [(ngModel)]="novaConsulta.dataFim" />
+          </div>
+        </div>
+
+        @if (erroNova) {
+          <p class="modal__error">{{ erroNova }}</p>
+        }
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModalNova()">Cancelar</button>
+        <button class="btn-primary" [disabled]="salvando" (click)="salvarConsulta()">
+          {{ salvando ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showModalCancelar) {
+  <div class="modal-overlay" (click)="fecharModalCancelar()">
+    <div class="modal modal--sm" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">Cancelar consulta</h2>
+      <p class="modal__subtitle">
+        Consulta de <strong>{{ getNomePaciente(consultaParaCancelar!) }}</strong>
+      </p>
+
+      <div class="modal__form">
+        <div class="modal__field">
+          <label class="modal__label">Motivo do cancelamento <span class="modal__required">*</span></label>
+          <textarea
+            class="modal__input modal__textarea"
+            [(ngModel)]="motivoCancelamento"
+            placeholder="Descreva o motivo..."
+          ></textarea>
+        </div>
+
+        @if (erroCancelar) {
+          <p class="modal__error">{{ erroCancelar }}</p>
+        }
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModalCancelar()">Voltar</button>
+        <button class="btn-danger" [disabled]="cancelando" (click)="confirmarCancelamento()">
+          {{ cancelando ? 'Cancelando...' : 'Confirmar cancelamento' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
