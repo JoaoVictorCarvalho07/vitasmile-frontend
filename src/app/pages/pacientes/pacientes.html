@@ -1,1 +1,94 @@
-<h1>Pacientes</h1>
+<div class="pacientes">
+
+  <div class="pacientes__header">
+    <h1 class="pacientes__title">Pacientes</h1>
+    <button class="btn-primary" (click)="abrirModalCriar()">+ Novo paciente</button>
+  </div>
+
+  <div class="pacientes__search">
+    <input
+      class="pacientes__search-input"
+      type="text"
+      placeholder="Buscar por nome ou CPF..."
+      [(ngModel)]="busca"
+    />
+  </div>
+
+  <div class="pacientes__section">
+    @if (pacientesFiltrados.length === 0) {
+      <p class="pacientes__empty">Nenhum paciente encontrado.</p>
+    } @else {
+      <table class="pacientes__table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>Cadastro</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of pacientesFiltrados; track p.id) {
+            <tr>
+              <td class="pacientes__name">{{ p.nome }}</td>
+              <td>{{ p.cpf }}</td>
+              <td>{{ p.email }}</td>
+              <td>{{ p.telefone ?? '—' }}</td>
+              <td>{{ p.dataCriacao | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <button class="btn-action btn-action--edit" (click)="abrirModalEditar(p)">
+                  Editar
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>
+
+@if (showModal) {
+  <div class="modal-overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ editando ? 'Editar paciente' : 'Novo paciente' }}</h2>
+
+      <div class="modal__form">
+        <div class="modal__field">
+          <label class="modal__label">Nome <span class="modal__required">*</span></label>
+          <input class="modal__input" type="text" [(ngModel)]="form.nome" placeholder="Nome completo" />
+        </div>
+
+        <div class="modal__row">
+          <div class="modal__field">
+            <label class="modal__label">CPF <span class="modal__required">*</span></label>
+            <input class="modal__input" type="text" [(ngModel)]="form.cpf" placeholder="000.000.000-00" />
+          </div>
+          <div class="modal__field">
+            <label class="modal__label">Telefone</label>
+            <input class="modal__input" type="text" [(ngModel)]="form.telefone" placeholder="(00) 00000-0000" />
+          </div>
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">E-mail <span class="modal__required">*</span></label>
+          <input class="modal__input" type="email" [(ngModel)]="form.email" placeholder="email@exemplo.com" />
+        </div>
+
+        @if (erro) {
+          <p class="modal__error">{{ erro }}</p>
+        }
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-primary" [disabled]="salvando" (click)="salvar()">
+          {{ salvando ? 'Salvando...' : (editando ? 'Salvar alterações' : 'Cadastrar') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

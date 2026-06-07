@@ -12,4 +12,12 @@ export class PacienteService {
   getAll(): Observable<Paciente[]> {
     return this.http.get<Paciente[]>(`${this.API}/pacientes`);
   }
+
+  create(paciente: Partial<Paciente>): Observable<Paciente> {
+    return this.http.post<Paciente>(`${this.API}/pacientes`, paciente);
+  }
+
+  update(id: number, paciente: Partial<Paciente>): Observable<Paciente> {
+    return this.http.put<Paciente>(`${this.API}/pacientes/${id}`, paciente);
+  }
 }
