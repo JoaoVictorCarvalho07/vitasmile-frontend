@@ -1,13 +1,11 @@
 <div class="login-page">
   <div class="login-page__card">
-
     <div class="login-page__header">
       <h1 class="login-page__title">VitaSmile</h1>
       <p class="login-page__subtitle">Sistema de gestão odontológica</p>
     </div>
 
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-page__form">
-
       <div class="login-page__field">
         <label class="login-page__label" for="email">E-mail</label>
         <input
@@ -38,14 +36,13 @@
         <p class="login-page__error">{{ error }}</p>
       }
 
-      <button
-        type="submit"
-        [disabled]="loading || loginForm.invalid"
-        class="login-page__btn"
-      >
-        @if (loading) { Entrando... } @else { Entrar }
+      <button type="submit" [disabled]="loading || loginForm.invalid" class="login-page__btn">
+        @if (loading) {
+          Entrando...
+        } @else {
+          Entrar
+        }
       </button>
-
     </form>
   </div>
 </div>

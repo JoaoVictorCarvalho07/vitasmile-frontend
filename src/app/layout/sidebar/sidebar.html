@@ -1,0 +1,38 @@
+<aside class="sidebar">
+  <div class="sidebar__logo">
+    <div class="sidebar__logo-name">
+      <span class="sidebar__logo-vita">Vita</span><span class="sidebar__logo-smile">Smile</span>
+    </div>
+    <p class="sidebar__logo-sub">Dental Management</p>
+  </div>
+
+  <nav class="sidebar__nav">
+    <a routerLink="/dashboard" routerLinkActive="sidebar__item--active" class="sidebar__item">
+      Dashboard
+    </a>
+    <a routerLink="/consultas" routerLinkActive="sidebar__item--active" class="sidebar__item">
+      Consultas
+    </a>
+    <a routerLink="/pacientes" routerLinkActive="sidebar__item--active" class="sidebar__item">
+      Pacientes
+    </a>
+    <a routerLink="/dentistas" routerLinkActive="sidebar__item--active" class="sidebar__item">
+      Dentistas
+    </a>
+    <a routerLink="/especialidades" routerLinkActive="sidebar__item--active" class="sidebar__item">
+      Especialidades
+    </a>
+    <a routerLink="/relatorios" routerLinkActive="sidebar__item--active" class="sidebar__item">
+      Relatórios
+    </a>
+    @if (isAdmin) {
+      <a routerLink="/usuarios" routerLinkActive="sidebar__item--active" class="sidebar__item">
+        Usuários
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <button (click)="logout()" class="sidebar__logout">Sair</button>
+  </div>
+</aside>
