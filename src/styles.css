@@ -1,3 +1,33 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+:root {
+  --indigo-950:     #1e1b4b;
+  --indigo-700:     #4338ca;
+  --indigo-500:     #6366f1;
+  --indigo-300:     #a5b4fc;
+  --indigo-50:      #eef2ff;
+  --surface:        #f8faff;
+  --success:        #0f766e;
+  --success-bg:     #ecfdf5;
+  --warning:        #d97706;
+  --danger:         #dc2626;
+  --danger-bg:      #fef2f2;
+  --text-primary:   #0f172a;
+  --text-secondary: #64748b;
+  --border:         rgba(0, 0, 0, 0.08);
+  --radius-sm:      6px;
+  --radius-md:      8px;
+  --radius-lg:      12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--surface);
+  color: var(--text-primary);
+}
