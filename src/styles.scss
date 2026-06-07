@@ -31,3 +31,29 @@ body {
   background: var(--surface);
   color: var(--text-primary);
 }
+
+.pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+
+  &--agendada {
+    background: var(--indigo-50);
+    color: var(--indigo-700);
+  }
+
+  &--finalizada {
+    background: var(--success-bg);
+    color: var(--success);
+  }
+
+  &--cancelada {
+    background: var(--danger-bg);
+    color: #991b1b;
+  }
+}

@@ -1,1 +1,60 @@
-<h1>Dashboard</h1>
+<div class="dashboard">
+
+  <div class="dashboard__header">
+    <div>
+      <h1 class="dashboard__title">Dashboard</h1>
+      <p class="dashboard__date">{{ dataHoje }}</p>
+    </div>
+    <div class="dashboard__user">
+      <span class="dashboard__nome">{{ nome }}</span>
+      <span class="dashboard__badge dashboard__badge--{{ perfil | lowercase }}">{{ perfil }}</span>
+    </div>
+  </div>
+
+  <div class="dashboard__cards">
+    <div class="dashboard__card dashboard__card--accent">
+      <p class="dashboard__card-value">{{ totalHoje }}</p>
+      <p class="dashboard__card-label">Consultas hoje</p>
+    </div>
+    <div class="dashboard__card">
+      <p class="dashboard__card-value">{{ totalPendentes }}</p>
+      <p class="dashboard__card-label">Pendentes</p>
+    </div>
+    <div class="dashboard__card">
+      <p class="dashboard__card-value">{{ totalPacientes }}</p>
+      <p class="dashboard__card-label">Pacientes ativos</p>
+    </div>
+  </div>
+
+  <div class="dashboard__section">
+    <h2 class="dashboard__section-title">Consultas de hoje</h2>
+
+    @if (consultasHoje.length === 0) {
+      <p class="dashboard__empty">Nenhuma consulta agendada para hoje.</p>
+    } @else {
+      <table class="dashboard__table">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Dentista</th>
+            <th>Horário</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of consultasHoje; track c.id) {
+            <tr>
+              <td class="dashboard__patient">{{ getNomePaciente(c) }}</td>
+              <td>{{ getNomeDentista(c) }}</td>
+              <td>{{ c.dataInicio | date:'HH:mm' }}</td>
+              <td>
+                <span class="pill pill--{{ c.status | lowercase }}">{{ c.status }}</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>
