@@ -12,4 +12,8 @@ export class DentistaService {
   getAll(): Observable<Dentista[]> {
     return this.http.get<Dentista[]>(`${this.API}/dentistas`);
   }
+
+  update(id: number, dentista: Partial<Dentista>): Observable<Dentista> {
+    return this.http.put<Dentista>(`${this.API}/dentistas/${id}`, dentista);
+  }
 }

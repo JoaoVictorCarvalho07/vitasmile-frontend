@@ -1,1 +1,63 @@
-<h1>Dentistas</h1>
+<div class="dentistas">
+
+  <div class="dentistas__header">
+    <h1 class="dentistas__title">Dentistas</h1>
+  </div>
+
+  <div class="dentistas__search">
+    <input
+      class="dentistas__search-input"
+      type="text"
+      placeholder="Buscar por nome ou CRO..."
+      [(ngModel)]="busca"
+    />
+  </div>
+
+  <div class="dentistas__section">
+    @if (dentistasFiltrados.length === 0) {
+      <p class="dentistas__empty">Nenhum dentista encontrado.</p>
+    } @else {
+      <table class="dentistas__table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CRO</th>
+            <th>CPF</th>
+            <th>E-mail</th>
+            <th>Cadastro</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of dentistasFiltrados; track d.id) {
+            <tr>
+              <td class="dentistas__name">{{ d.nome }}</td>
+              <td>{{ d.cro }}</td>
+              <td>{{ d.cpf }}</td>
+              <td>{{ d.email }}</td>
+              <td>{{ d.dataCriacao | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="pill" [class.pill--ativo]="d.ativo" [class.pill--inativo]="!d.ativo">
+                  {{ d.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              <td>
+                <button
+                  class="btn-action"
+                  [class.btn-action--danger]="d.ativo"
+                  [class.btn-action--success]="!d.ativo"
+                  [disabled]="toggling.has(d.id)"
+                  (click)="toggleAtivo(d)"
+                >
+                  {{ toggling.has(d.id) ? '...' : (d.ativo ? 'Desativar' : 'Ativar') }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>

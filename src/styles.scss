@@ -55,6 +55,16 @@ body {
     background: var(--danger-bg);
     color: #991b1b;
   }
+
+  &--ativo {
+    background: var(--success-bg);
+    color: var(--success);
+  }
+
+  &--inativo {
+    background: #f3f4f6;
+    color: var(--text-secondary);
+  }
 }
 
 // ---- Botões ----
