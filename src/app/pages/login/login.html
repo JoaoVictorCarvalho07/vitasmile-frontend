@@ -1,55 +1,51 @@
-<div class="min-h-screen flex items-center justify-center px-4" style="background: var(--surface)">
+<div class="login-page">
+  <div class="login-page__card">
 
-  <div class="bg-white w-full max-w-sm rounded-xl p-8" style="border: 1px solid var(--border)">
-
-    <div class="text-center mb-8">
-      <h1 class="text-2xl font-medium" style="color: var(--indigo-700)">VitaSmile</h1>
-      <p class="text-sm mt-1" style="color: var(--text-secondary)">Sistema de gestão odontológica</p>
+    <div class="login-page__header">
+      <h1 class="login-page__title">VitaSmile</h1>
+      <p class="login-page__subtitle">Sistema de gestão odontológica</p>
     </div>
 
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="flex flex-col gap-5">
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-page__form">
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium" style="color: var(--text-primary)">E-mail</label>
+      <div class="login-page__field">
+        <label class="login-page__label" for="email">E-mail</label>
         <input
+          id="email"
           type="email"
           name="email"
           [(ngModel)]="credentials.email"
           required
-          class="w-full px-3 py-2.5 text-sm focus:outline-none focus:ring-2"
-          style="border: 1px solid var(--border); border-radius: var(--radius-md); focus-ring-color: var(--indigo-500)"
+          class="login-page__input"
           placeholder="seuemail@exemplo.com"
         />
       </div>
 
-      <div class="flex flex-col gap-1.5">
-        <label class="text-sm font-medium" style="color: var(--text-primary)">Senha</label>
+      <div class="login-page__field">
+        <label class="login-page__label" for="senha">Senha</label>
         <input
+          id="senha"
           type="password"
           name="senha"
           [(ngModel)]="credentials.senha"
           required
-          class="w-full px-3 py-2.5 text-sm focus:outline-none focus:ring-2"
-          style="border: 1px solid var(--border); border-radius: var(--radius-md)"
+          class="login-page__input"
           placeholder="••••••••"
         />
       </div>
 
       @if (error) {
-        <p class="text-sm" style="color: var(--danger)">{{ error }}</p>
+        <p class="login-page__error">{{ error }}</p>
       }
 
       <button
         type="submit"
         [disabled]="loading || loginForm.invalid"
-        class="w-full py-2.5 text-sm font-medium text-white transition-opacity disabled:opacity-50 mt-1"
-        style="background: var(--indigo-700); border-radius: var(--radius-md)"
+        class="login-page__btn"
       >
         @if (loading) { Entrando... } @else { Entrar }
       </button>
 
     </form>
-
   </div>
-
 </div>

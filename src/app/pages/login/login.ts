@@ -8,7 +8,7 @@ import { AuthRequest } from '../../models/auth.model';
   selector: 'app-login',
   imports: [FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrl: './login.scss',
 })
 export class LoginPage {
   credentials: AuthRequest = { email: '', senha: '' };
