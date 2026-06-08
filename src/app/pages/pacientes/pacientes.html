@@ -10,12 +10,26 @@
       class="pacientes__search-input"
       type="text"
       placeholder="Buscar por nome ou CPF..."
-      [(ngModel)]="busca"
+      [ngModel]="busca()"
+      (ngModelChange)="busca.set($event)"
     />
+
+    <label class="pacientes__page-size">
+      Itens por página:
+      <select [ngModel]="lista.pageSize()" (ngModelChange)="mudarTamanho($event)">
+        @for (opcao of tamanhos; track opcao) {
+          <option [ngValue]="opcao">{{ opcao }}</option>
+        }
+      </select>
+    </label>
   </div>
 
   <div class="pacientes__section">
-    @if (pacientesFiltrados.length === 0) {
+    @if (lista.loading()) {
+      <p class="pacientes__empty">Carregando...</p>
+    } @else if (lista.error()) {
+      <p class="pacientes__empty">{{ lista.error() }}</p>
+    } @else if (pacientesFiltrados().length === 0) {
       <p class="pacientes__empty">Nenhum paciente encontrado.</p>
     } @else {
       <table class="pacientes__table">
@@ -30,7 +44,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (p of pacientesFiltrados; track p.id) {
+          @for (p of pacientesFiltrados(); track p.id) {
             <tr>
               <td class="pacientes__name">{{ p.nome }}</td>
               <td>{{ p.cpf }}</td>
@@ -46,15 +60,25 @@
           }
         </tbody>
       </table>
+
+      <div class="pacientes__pager">
+        <span class="pacientes__pager-info">
+          {{ lista.totalElements() }} pacientes · página {{ lista.pageIndex() + 1 }} de {{ lista.totalPages() }}
+        </span>
+        <div class="pacientes__pager-actions">
+          <button class="btn-ghost" [disabled]="lista.isFirst()" (click)="lista.prev()">Anterior</button>
+          <button class="btn-ghost" [disabled]="lista.isLast()" (click)="lista.next()">Próxima</button>
+        </div>
+      </div>
     }
   </div>
 
 </div>
 
-@if (showModal) {
+@if (showModal()) {
   <div class="modal-overlay" (click)="fecharModal()">
     <div class="modal" (click)="$event.stopPropagation()">
-      <h2 class="modal__title">{{ editando ? 'Editar paciente' : 'Novo paciente' }}</h2>
+      <h2 class="modal__title">{{ editando() ? 'Editar paciente' : 'Novo paciente' }}</h2>
 
       <div class="modal__form">
         <div class="modal__field">
@@ -78,15 +102,15 @@
           <input class="modal__input" type="email" [(ngModel)]="form.email" placeholder="email@exemplo.com" />
         </div>
 
-        @if (erro) {
-          <p class="modal__error">{{ erro }}</p>
+        @if (erro()) {
+          <p class="modal__error">{{ erro() }}</p>
         }
       </div>
 
       <div class="modal__footer">
         <button class="btn-ghost" (click)="fecharModal()">Cancelar</button>
-        <button class="btn-primary" [disabled]="salvando" (click)="salvar()">
-          {{ salvando ? 'Salvando...' : (editando ? 'Salvar alterações' : 'Cadastrar') }}
+        <button class="btn-primary" [disabled]="salvando()" (click)="salvar()">
+          {{ salvando() ? 'Salvando...' : (editando() ? 'Salvar alterações' : 'Cadastrar') }}
         </button>
       </div>
     </div>

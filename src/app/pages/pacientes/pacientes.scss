@@ -13,7 +13,31 @@
   }
 
   &__search {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
     margin-bottom: 1.25rem;
+  }
+
+  &__page-size {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+
+    select {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: #fff;
+      color: var(--text-primary);
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
   }
 
   &__search-input {
@@ -71,6 +95,24 @@
   }
 
   &__name { font-weight: 500; }
+
+  &__pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+
+  &__pager-info {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  &__pager-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
 }
 
 .btn-action--edit {
