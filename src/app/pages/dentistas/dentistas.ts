@@ -1,8 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { DentistaService } from '../../services/dentista.service';
 import { Dentista } from '../../models/dentista.model';
+import { PAGE_SIZE_OPTIONS } from '../../models/page.model';
 
 @Component({
   selector: 'app-dentistas',
@@ -10,34 +11,46 @@ import { Dentista } from '../../models/dentista.model';
   templateUrl: './dentistas.html',
   styleUrl: './dentistas.scss',
 })
-export class DentistasComponent implements OnInit {
+export class DentistasComponent {
   private dentistaService = inject(DentistaService);
 
-  dentistas: Dentista[] = [];
-  busca = '';
-  toggling = new Set<number>();
+  readonly lista = this.dentistaService.lista;
+  readonly tamanhos = PAGE_SIZE_OPTIONS;
 
-  ngOnInit(): void {
-    this.dentistaService.getAll().subscribe({ next: (d) => (this.dentistas = d) });
-  }
+  busca = signal('');
+  toggling = signal<ReadonlySet<number>>(new Set());
 
-  get dentistasFiltrados(): Dentista[] {
-    const termo = this.busca.toLowerCase();
-    if (!termo) return this.dentistas;
-    return this.dentistas.filter(
+  readonly dentistasFiltrados = computed(() => {
+    const termo = this.busca().toLowerCase();
+    const itens = this.lista.items();
+    if (!termo) return itens;
+    return itens.filter(
       (d) => d.nome.toLowerCase().includes(termo) || d.cro.toLowerCase().includes(termo),
     );
+  });
+
+  mudarTamanho(valor: string): void {
+    this.lista.setSize(Number(valor));
   }
 
   toggleAtivo(d: Dentista): void {
-    if (this.toggling.has(d.id)) return;
-    this.toggling.add(d.id);
+    if (this.toggling().has(d.id)) return;
+    this.toggling.update((s) => new Set(s).add(d.id));
+
     this.dentistaService.update(d.id, { ...d, ativo: !d.ativo }).subscribe({
-      next: (atualizado) => {
-        this.dentistas = this.dentistas.map((x) => (x.id === atualizado.id ? atualizado : x));
-        this.toggling.delete(d.id);
+      next: () => {
+        this.lista.reload();
+        this.removerToggling(d.id);
       },
-      error: () => this.toggling.delete(d.id),
+      error: () => this.removerToggling(d.id),
+    });
+  }
+
+  private removerToggling(id: number): void {
+    this.toggling.update((s) => {
+      const proximo = new Set(s);
+      proximo.delete(id);
+      return proximo;
     });
   }
 }

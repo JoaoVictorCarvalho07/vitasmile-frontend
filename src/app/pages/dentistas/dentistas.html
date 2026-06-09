@@ -9,12 +9,26 @@
       class="dentistas__search-input"
       type="text"
       placeholder="Buscar por nome ou CRO..."
-      [(ngModel)]="busca"
+      [ngModel]="busca()"
+      (ngModelChange)="busca.set($event)"
     />
+
+    <label class="dentistas__page-size">
+      Itens por página:
+      <select [ngModel]="lista.pageSize()" (ngModelChange)="mudarTamanho($event)">
+        @for (opcao of tamanhos; track opcao) {
+          <option [ngValue]="opcao">{{ opcao }}</option>
+        }
+      </select>
+    </label>
   </div>
 
   <div class="dentistas__section">
-    @if (dentistasFiltrados.length === 0) {
+    @if (lista.loading()) {
+      <p class="dentistas__empty">Carregando...</p>
+    } @else if (lista.error()) {
+      <p class="dentistas__empty">{{ lista.error() }}</p>
+    } @else if (dentistasFiltrados().length === 0) {
       <p class="dentistas__empty">Nenhum dentista encontrado.</p>
     } @else {
       <table class="dentistas__table">
@@ -30,7 +44,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (d of dentistasFiltrados; track d.id) {
+          @for (d of dentistasFiltrados(); track d.id) {
             <tr>
               <td class="dentistas__name">{{ d.nome }}</td>
               <td>{{ d.cro }}</td>
@@ -47,16 +61,26 @@
                   class="btn-action"
                   [class.btn-action--danger]="d.ativo"
                   [class.btn-action--success]="!d.ativo"
-                  [disabled]="toggling.has(d.id)"
+                  [disabled]="toggling().has(d.id)"
                   (click)="toggleAtivo(d)"
                 >
-                  {{ toggling.has(d.id) ? '...' : (d.ativo ? 'Desativar' : 'Ativar') }}
+                  {{ toggling().has(d.id) ? '...' : (d.ativo ? 'Desativar' : 'Ativar') }}
                 </button>
               </td>
             </tr>
           }
         </tbody>
       </table>
+
+      <div class="dentistas__pager">
+        <span class="dentistas__pager-info">
+          {{ lista.totalElements() }} dentistas · página {{ lista.pageIndex() + 1 }} de {{ lista.totalPages() }}
+        </span>
+        <div class="dentistas__pager-actions">
+          <button class="btn-ghost" [disabled]="lista.isFirst()" (click)="lista.prev()">Anterior</button>
+          <button class="btn-ghost" [disabled]="lista.isLast()" (click)="lista.next()">Próxima</button>
+        </div>
+      </div>
     }
   </div>
 

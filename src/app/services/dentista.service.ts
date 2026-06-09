@@ -1,16 +1,28 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Dentista } from '../models/dentista.model';
+import { Page, PageQuery } from '../models/page.model';
+import { PagedCollection } from '../core/paged-collection';
 
 @Injectable({ providedIn: 'root' })
 export class DentistaService {
   private readonly API = 'http://localhost:8080';
+  private readonly http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  readonly lista = new PagedCollection<Dentista>((query) => this.getPage(query));
+
+  private getPage(query: PageQuery): Observable<Page<Dentista>> {
+    let params = new HttpParams().set('page', query.page).set('size', query.size);
+    if (query.sort) {
+      params = params.set('sort', query.sort);
+    }
+    return this.http.get<Page<Dentista>>(`${this.API}/dentista/all`, { params });
+  }
 
   getAll(): Observable<Dentista[]> {
-    return this.http.get<Dentista[]>(`${this.API}/dentistas`);
+    return this.getPage({ page: 0, size: 1000 }).pipe(map((p) => p.content));
   }
 
   update(id: number, dentista: Partial<Dentista>): Observable<Dentista> {
