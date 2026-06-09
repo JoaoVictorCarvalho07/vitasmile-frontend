@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { Dentista } from '../models/dentista.model';
 import { Page, PageQuery } from '../models/page.model';
 import { PagedCollection } from '../core/paged-collection';
@@ -13,6 +13,8 @@ export class DentistaService {
 
   readonly lista = new PagedCollection<Dentista>((query) => this.getPage(query));
 
+  private allCache$?: Observable<Dentista[]>;
+
   private getPage(query: PageQuery): Observable<Page<Dentista>> {
     let params = new HttpParams().set('page', query.page).set('size', query.size);
     if (query.sort) {
@@ -22,7 +24,10 @@ export class DentistaService {
   }
 
   getAll(): Observable<Dentista[]> {
-    return this.getPage({ page: 0, size: 1000 }).pipe(map((p) => p.content));
+    return (this.allCache$ ??= this.getPage({ page: 0, size: 1000 }).pipe(
+      map((p) => p.content),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    ));
   }
 
   update(id: number, dentista: Partial<Dentista>): Observable<Dentista> {
