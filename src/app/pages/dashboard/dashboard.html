@@ -13,15 +13,15 @@
 
   <div class="dashboard__cards">
     <div class="dashboard__card dashboard__card--accent">
-      <p class="dashboard__card-value">{{ totalHoje }}</p>
+      <p class="dashboard__card-value">{{ totalHoje() }}</p>
       <p class="dashboard__card-label">Consultas hoje</p>
     </div>
     <div class="dashboard__card">
-      <p class="dashboard__card-value">{{ totalPendentes }}</p>
+      <p class="dashboard__card-value">{{ totalPendentes() }}</p>
       <p class="dashboard__card-label">Pendentes</p>
     </div>
     <div class="dashboard__card">
-      <p class="dashboard__card-value">{{ totalPacientes }}</p>
+      <p class="dashboard__card-value">{{ totalPacientes() }}</p>
       <p class="dashboard__card-label">Pacientes ativos</p>
     </div>
   </div>
@@ -29,7 +29,7 @@
   <div class="dashboard__section">
     <h2 class="dashboard__section-title">Consultas de hoje</h2>
 
-    @if (consultasHoje.length === 0) {
+    @if (consultasHoje().length === 0) {
       <p class="dashboard__empty">Nenhuma consulta agendada para hoje.</p>
     } @else {
       <table class="dashboard__table">
@@ -42,7 +42,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (c of consultasHoje; track c.id) {
+          @for (c of consultasHoje(); track c.id) {
             <tr>
               <td class="dashboard__patient">{{ getNomePaciente(c) }}</td>
               <td>{{ getNomeDentista(c) }}</td>

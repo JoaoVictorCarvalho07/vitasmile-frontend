@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, LowerCasePipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ConsultaService } from '../../services/consulta.service';
@@ -11,7 +12,7 @@ import { Consulta } from '../../models/consulta.model';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   private auth = inject(AuthService);
   private consultaService = inject(ConsultaService);
   private pacienteService = inject(PacienteService);
@@ -19,27 +20,20 @@ export class DashboardComponent implements OnInit {
   nome = this.auth.getNome() ?? '';
   perfil = this.auth.getPerfil() ?? '';
 
-  consultasHoje: Consulta[] = [];
-  totalHoje = 0;
-  totalPendentes = 0;
-  totalPacientes = 0;
+  private todasConsultas = toSignal(this.consultaService.getAll(), { initialValue: [] as Consulta[] });
 
-  ngOnInit(): void {
-    this.consultaService.getAll().subscribe({
-      next: (consultas) => {
-        const hoje = new Date().toDateString();
-        this.consultasHoje = consultas.filter(
-          (c) => new Date(c.dataInicio).toDateString() === hoje,
-        );
-        this.totalHoje = this.consultasHoje.length;
-        this.totalPendentes = consultas.filter((c) => c.status === 'AGENDADA').length;
-      },
-    });
+  protected consultasHoje = computed(() => {
+    const hoje = new Date().toDateString();
+    return this.todasConsultas().filter(
+      (c) => new Date(c.dataInicio).toDateString() === hoje,
+    );
+  });
 
-    this.pacienteService.getAll().subscribe({
-      next: (pacientes) => (this.totalPacientes = pacientes.length),
-    });
-  }
+  protected totalHoje = computed(() => this.consultasHoje().length);
+  protected totalPendentes = computed(() =>
+    this.todasConsultas().filter((c) => c.status === 'AGENDADA').length,
+  );
+  protected totalPacientes = computed(() => this.pacienteService.lista.totalElements());
 
   get dataHoje(): string {
     return new Date().toLocaleDateString('pt-BR', {
