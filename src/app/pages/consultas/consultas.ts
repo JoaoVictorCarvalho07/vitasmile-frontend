@@ -1,4 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, LowerCasePipe } from '@angular/common';
 import { ConsultaService } from '../../services/consulta.service';
@@ -7,6 +8,7 @@ import { DentistaService } from '../../services/dentista.service';
 import { Consulta, StatusConsulta } from '../../models/consulta.model';
 import { Paciente } from '../../models/paciente.model';
 import { Dentista } from '../../models/dentista.model';
+import { PAGE_SIZE_OPTIONS } from '../../models/page.model';
 
 interface NovaConsultaForm {
   idPaciente: number | null;
@@ -22,14 +24,16 @@ interface NovaConsultaForm {
   templateUrl: './consultas.html',
   styleUrl: './consultas.scss',
 })
-export class ConsultasComponent implements OnInit {
-  private consultaService = inject(ConsultaService);
-  private pacienteService = inject(PacienteService);
-  private dentistaService = inject(DentistaService);
+export class ConsultasComponent {
+  protected readonly consultaService = inject(ConsultaService);
+  private readonly pacienteService = inject(PacienteService);
+  private readonly dentistaService = inject(DentistaService);
 
-  consultas: Consulta[] = [];
-  pacientes: Paciente[] = [];
-  dentistas: Dentista[] = [];
+  protected readonly lista = this.consultaService.lista;
+  protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
+
+  protected pacientes: Paciente[] = [];
+  protected dentistas: Dentista[] = [];
 
   filtroStatus: StatusConsulta | '' = '';
   filtroNomePaciente = '';
@@ -47,20 +51,21 @@ export class ConsultasComponent implements OnInit {
   erroCancelar = '';
   cancelando = false;
 
-  ngOnInit(): void {
-    this.consultaService.getAll().subscribe({ next: (d) => (this.consultas = d) });
-    this.pacienteService.getAll().subscribe({ next: (d) => (this.pacientes = d) });
-    this.dentistaService.getAll().subscribe({ next: (d) => (this.dentistas = d) });
+  constructor() {
+    this.pacienteService.getAll().pipe(takeUntilDestroyed()).subscribe((d) => (this.pacientes = d));
+    this.dentistaService.getAll().pipe(takeUntilDestroyed()).subscribe((d) => (this.dentistas = d));
   }
 
   get consultasFiltradas(): Consulta[] {
-    return this.consultas.filter((c) => {
+    return this.lista.items().filter((c) => {
       const nomePac = (c.nomePaciente ?? c.paciente?.nome ?? '').toLowerCase();
       const nomeDen = (c.nomeDentista ?? c.dentista?.nome ?? '').toLowerCase();
       const data = c.dataInicio?.substring(0, 10) ?? '';
       if (this.filtroStatus && c.status !== this.filtroStatus) return false;
-      if (this.filtroNomePaciente && !nomePac.includes(this.filtroNomePaciente.toLowerCase())) return false;
-      if (this.filtroNomeDentista && !nomeDen.includes(this.filtroNomeDentista.toLowerCase())) return false;
+      if (this.filtroNomePaciente && !nomePac.includes(this.filtroNomePaciente.toLowerCase()))
+        return false;
+      if (this.filtroNomeDentista && !nomeDen.includes(this.filtroNomeDentista.toLowerCase()))
+        return false;
       if (this.filtroData && data !== this.filtroData) return false;
       return true;
     });
@@ -91,8 +96,9 @@ export class ConsultasComponent implements OnInit {
     }
     this.salvando = true;
     this.consultaService.create(this.novaConsulta as Partial<Consulta>).subscribe({
-      next: (nova) => {
-        this.consultas = [nova, ...this.consultas];
+      next: () => {
+        this.consultaService.invalidateAll();
+        this.lista.reload();
         this.fecharModalNova();
         this.salvando = false;
       },
@@ -123,11 +129,8 @@ export class ConsultasComponent implements OnInit {
     this.cancelando = true;
     this.consultaService.cancelar(this.consultaParaCancelar!.id, this.motivoCancelamento).subscribe({
       next: () => {
-        this.consultas = this.consultas.map((c) =>
-          c.id === this.consultaParaCancelar!.id
-            ? { ...c, status: 'CANCELADA' as StatusConsulta }
-            : c,
-        );
+        this.consultaService.invalidateAll();
+        this.lista.reload();
         this.fecharModalCancelar();
         this.cancelando = false;
       },
@@ -141,9 +144,8 @@ export class ConsultasComponent implements OnInit {
   finalizar(c: Consulta): void {
     this.consultaService.finalizar(c.id).subscribe({
       next: () => {
-        this.consultas = this.consultas.map((item) =>
-          item.id === c.id ? { ...item, status: 'FINALIZADA' as StatusConsulta } : item,
-        );
+        this.consultaService.invalidateAll();
+        this.lista.reload();
       },
     });
   }

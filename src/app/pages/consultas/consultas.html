@@ -26,10 +26,25 @@
     </select>
     <input class="consultas__filter-input" type="date" [(ngModel)]="filtroData" />
     <button class="consultas__filter-clear" (click)="limparFiltros()">Limpar</button>
+    <div class="consultas__page-size">
+      <label>Exibir</label>
+      <select [ngModel]="lista.pageSize()" (ngModelChange)="lista.setSize($event)">
+        @for (opt of pageSizeOptions; track opt) {
+          <option [ngValue]="opt">{{ opt }}</option>
+        }
+      </select>
+      <span>por página</span>
+    </div>
   </div>
 
+  @if (lista.error()) {
+    <p class="consultas__error">{{ lista.error() }}</p>
+  }
+
   <div class="consultas__section">
-    @if (consultasFiltradas.length === 0) {
+    @if (lista.loading()) {
+      <p class="consultas__empty">Carregando...</p>
+    } @else if (consultasFiltradas.length === 0) {
       <p class="consultas__empty">Nenhuma consulta encontrada.</p>
     } @else {
       <table class="consultas__table">
@@ -67,6 +82,17 @@
           }
         </tbody>
       </table>
+
+      <div class="consultas__pager">
+        <span class="consultas__pager-info">
+          Página {{ lista.pageIndex() + 1 }} de {{ lista.totalPages() }}
+          ({{ lista.totalElements() }} registros)
+        </span>
+        <div class="consultas__pager-actions">
+          <button class="btn-ghost" [disabled]="lista.isFirst()" (click)="lista.prev()">← Anterior</button>
+          <button class="btn-ghost" [disabled]="lista.isLast()" (click)="lista.next()">Próxima →</button>
+        </div>
+      </div>
     }
   </div>
 
