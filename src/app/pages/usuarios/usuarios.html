@@ -1,1 +1,147 @@
-<h1>Usuários</h1>
+<div class="usuarios">
+
+  <div class="usuarios__header">
+    <h1 class="usuarios__title">Usuários</h1>
+    <button class="btn-primary" (click)="abrirModalCriar()">+ Novo usuário</button>
+  </div>
+
+  <div class="usuarios__search">
+    <input
+      class="usuarios__search-input"
+      type="text"
+      placeholder="Buscar por nome, e-mail ou CPF..."
+      [ngModel]="busca()"
+      (ngModelChange)="busca.set($event)"
+    />
+
+    <label class="usuarios__page-size">
+      Itens por página:
+      <select [ngModel]="lista.pageSize()" (ngModelChange)="mudarTamanho($event)">
+        @for (opcao of tamanhos; track opcao) {
+          <option [ngValue]="opcao">{{ opcao }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  <div class="usuarios__section">
+    @if (lista.loading()) {
+      <p class="usuarios__empty">Carregando...</p>
+    } @else if (lista.error()) {
+      <p class="usuarios__empty">{{ lista.error() }}</p>
+    } @else if (usuariosFiltrados().length === 0) {
+      <p class="usuarios__empty">Nenhum usuário encontrado.</p>
+    } @else {
+      <table class="usuarios__table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>E-mail</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuariosFiltrados(); track u.id) {
+            <tr>
+              <td class="usuarios__name">{{ u.nome }}</td>
+              <td>{{ u.cpf }}</td>
+              <td>{{ u.email }}</td>
+              <td><span class="pill pill--agendada">{{ u.perfil }}</span></td>
+              <td>
+                <span class="pill" [class.pill--ativo]="u.ativo" [class.pill--inativo]="!u.ativo">
+                  {{ u.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              <td class="usuarios__actions">
+                <button class="btn-action btn-action--edit" (click)="abrirModalEditar(u)">
+                  Editar
+                </button>
+                <button
+                  class="btn-action"
+                  [class.btn-action--danger]="u.ativo"
+                  [class.btn-action--success]="!u.ativo"
+                  [disabled]="toggling().has(u.id)"
+                  (click)="toggleAtivo(u)"
+                >
+                  {{ toggling().has(u.id) ? '...' : (u.ativo ? 'Desativar' : 'Ativar') }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="usuarios__pager">
+        <span class="usuarios__pager-info">
+          {{ lista.totalElements() }} usuários · página {{ lista.pageIndex() + 1 }} de {{ lista.totalPages() }}
+        </span>
+        <div class="usuarios__pager-actions">
+          <button class="btn-ghost" [disabled]="lista.isFirst()" (click)="lista.prev()">Anterior</button>
+          <button class="btn-ghost" [disabled]="lista.isLast()" (click)="lista.next()">Próxima</button>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">{{ editando() ? 'Editar usuário' : 'Novo usuário' }}</h2>
+
+      <div class="modal__form">
+        <div class="modal__field">
+          <label class="modal__label">Nome <span class="modal__required">*</span></label>
+          <input class="modal__input" type="text" [(ngModel)]="form.nome" placeholder="Nome completo" />
+        </div>
+
+        <div class="modal__row">
+          <div class="modal__field">
+            <label class="modal__label">CPF <span class="modal__required">*</span></label>
+            <input class="modal__input" type="text" [(ngModel)]="form.cpf" placeholder="000.000.000-00" />
+          </div>
+          <div class="modal__field">
+            <label class="modal__label">Perfil <span class="modal__required">*</span></label>
+            <select class="modal__input" [(ngModel)]="form.perfil">
+              @for (p of perfis; track p) {
+                <option [ngValue]="p">{{ p }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">E-mail <span class="modal__required">*</span></label>
+          <input class="modal__input" type="email" [(ngModel)]="form.email" placeholder="email@exemplo.com" />
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">
+            Senha @if (!editando()) { <span class="modal__required">*</span> }
+          </label>
+          <input
+            class="modal__input"
+            type="password"
+            [(ngModel)]="form.senha"
+            [placeholder]="editando() ? 'Deixe em branco para manter a atual' : 'Senha de acesso'"
+          />
+        </div>
+
+        @if (erro()) {
+          <p class="modal__error">{{ erro() }}</p>
+        }
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-primary" [disabled]="salvando()" (click)="salvar()">
+          {{ salvando() ? 'Salvando...' : (editando() ? 'Salvar alterações' : 'Cadastrar') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
