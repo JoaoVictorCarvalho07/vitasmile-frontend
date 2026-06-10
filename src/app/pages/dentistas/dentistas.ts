@@ -37,7 +37,7 @@ export class DentistasComponent {
     if (this.toggling().has(d.id)) return;
     this.toggling.update((s) => new Set(s).add(d.id));
 
-    this.dentistaService.update(d.id, { ...d, ativo: !d.ativo }).subscribe({
+    this.dentistaService.setAtivo(d.id, !d.ativo).subscribe({
       next: () => {
         this.lista.reload();
         this.removerToggling(d.id);

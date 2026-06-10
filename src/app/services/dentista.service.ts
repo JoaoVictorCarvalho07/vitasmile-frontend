@@ -30,7 +30,8 @@ export class DentistaService {
     ));
   }
 
-  update(id: number, dentista: Partial<Dentista>): Observable<Dentista> {
-    return this.http.put<Dentista>(`${this.API}/dentistas/${id}`, dentista);
+  setAtivo(id: number, ativo: boolean): Observable<Dentista> {
+    const params = new HttpParams().set('ativo', ativo);
+    return this.http.put<Dentista>(`${this.API}/dentista/${id}/ativo`, null, { params });
   }
 }

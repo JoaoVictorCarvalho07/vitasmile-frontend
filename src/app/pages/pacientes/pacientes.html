@@ -102,6 +102,13 @@
           <input class="modal__input" type="email" [(ngModel)]="form.email" placeholder="email@exemplo.com" />
         </div>
 
+        @if (!editando()) {
+          <div class="modal__field">
+            <label class="modal__label">Senha <span class="modal__required">*</span></label>
+            <input class="modal__input" type="password" [(ngModel)]="form.senha" placeholder="Senha de acesso" />
+          </div>
+        }
+
         @if (erro()) {
           <p class="modal__error">{{ erro() }}</p>
         }

@@ -10,6 +10,7 @@ interface PacienteForm {
   email: string;
   cpf: string;
   telefone: string;
+  senha: string;
 }
 
 @Component({
@@ -53,7 +54,7 @@ export class PacientesComponent {
 
   abrirModalEditar(p: Paciente): void {
     this.editando.set(p);
-    this.form = { nome: p.nome, email: p.email, cpf: p.cpf, telefone: p.telefone ?? '' };
+    this.form = { nome: p.nome, email: p.email, cpf: p.cpf, telefone: p.telefone ?? '', senha: '' };
     this.erro.set('');
     this.showModal.set(true);
   }
@@ -66,6 +67,10 @@ export class PacientesComponent {
   salvar(): void {
     if (!this.form.nome || !this.form.email || !this.form.cpf) {
       this.erro.set('Nome, e-mail e CPF são obrigatórios.');
+      return;
+    }
+    if (!this.editando() && !this.form.senha) {
+      this.erro.set('A senha é obrigatória para novos pacientes.');
       return;
     }
     this.salvando.set(true);
@@ -99,6 +104,6 @@ export class PacientesComponent {
   }
 
   private formVazio(): PacienteForm {
-    return { nome: '', email: '', cpf: '', telefone: '' };
+    return { nome: '', email: '', cpf: '', telefone: '', senha: '' };
   }
 }

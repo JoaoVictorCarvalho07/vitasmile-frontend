@@ -14,9 +14,10 @@ export class ConsultaService {
   readonly lista = new PagedCollection<Consulta>((query) => this.getPage(query));
 
   private allCache$?: Observable<Consulta[]>;
-
+  
   private getPage(query: PageQuery): Observable<Page<Consulta>> {
     let params = new HttpParams().set('page', query.page).set('size', query.size);
+    console.log(params.toString());
     if (query.sort) {
       params = params.set('sort', query.sort);
     }
@@ -25,10 +26,11 @@ export class ConsultaService {
 
   getAll(): Observable<Consulta[]> {
     return (this.allCache$ ??= this.getPage({ page: 0, size: 1000 }).pipe(
-      map((p) => p.content),
+      map((p) => p.content ?? []),
       shareReplay({ bufferSize: 1, refCount: false }),
     ));
   }
+  
 
   invalidateAll(): void {
     this.allCache$ = undefined;
@@ -39,7 +41,8 @@ export class ConsultaService {
   }
 
   cancelar(id: number, motivo: string): Observable<Consulta> {
-    return this.http.post<Consulta>(`${this.API}/consultas/${id}/cancelar`, { motivo });
+    const params = new HttpParams().set('motivo', motivo);
+    return this.http.post<Consulta>(`${this.API}/consultas/${id}/cancelar`, null, { params });
   }
 
   finalizar(id: number): Observable<Consulta> {
