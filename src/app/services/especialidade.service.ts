@@ -1,16 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { Especialidade } from '../models/especialidade.model';
 
 @Injectable({ providedIn: 'root' })
 export class EspecialidadeService {
   private readonly API = 'http://localhost:8080';
+  private readonly http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {}
+  private allCache$?: Observable<Especialidade[]>;
 
   getAll(): Observable<Especialidade[]> {
-    return this.http.get<Especialidade[]>(`${this.API}/especialidades`);
+    return (this.allCache$ ??= this.http
+      .get<Especialidade[]>(`${this.API}/especialidades`)
+      .pipe(shareReplay({ bufferSize: 1, refCount: false })));
+  }
+
+  invalidateAll(): void {
+    this.allCache$ = undefined;
   }
 
   create(especialidade: Partial<Especialidade>): Observable<Especialidade> {

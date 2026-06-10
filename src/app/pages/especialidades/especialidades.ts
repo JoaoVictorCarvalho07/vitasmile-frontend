@@ -1,4 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { EspecialidadeService } from '../../services/especialidade.service';
 import { Especialidade } from '../../models/especialidade.model';
@@ -14,44 +16,46 @@ interface EspecialidadeForm {
   templateUrl: './especialidades.html',
   styleUrl: './especialidades.scss',
 })
-export class EspecialidadesComponent implements OnInit {
+export class EspecialidadesComponent {
   private especialidadeService = inject(EspecialidadeService);
 
-  especialidades: Especialidade[] = [];
-  showModal = false;
-  form: EspecialidadeForm = this.formVazio();
-  erro = '';
-  salvando = false;
+  private readonly reload = signal(0);
+  readonly especialidades = toSignal(
+    toObservable(this.reload).pipe(switchMap(() => this.especialidadeService.getAll())),
+    { initialValue: [] as Especialidade[] },
+  );
 
-  ngOnInit(): void {
-    this.especialidadeService.getAll().subscribe({ next: (d) => (this.especialidades = d) });
-  }
+  showModal = signal(false);
+  erro = signal('');
+  salvando = signal(false);
+  form: EspecialidadeForm = this.formVazio();
 
   abrirModal(): void {
     this.form = this.formVazio();
-    this.erro = '';
-    this.showModal = true;
+    this.erro.set('');
+    this.showModal.set(true);
   }
 
   fecharModal(): void {
-    this.showModal = false;
+    this.showModal.set(false);
   }
 
   salvar(): void {
     if (!this.form.nome.trim()) {
-      this.erro = 'O nome é obrigatório.';
+      this.erro.set('O nome é obrigatório.');
       return;
     }
-    this.salvando = true;
+    this.salvando.set(true);
     this.especialidadeService.create(this.form).subscribe({
-      next: (nova) => {
-        this.especialidades = [...this.especialidades, nova];
+      next: () => {
+        this.especialidadeService.invalidateAll();
+        this.reload.update((t) => t + 1);
         this.fecharModal();
-        this.salvando = false;
+        this.salvando.set(false);
       },
       error: () => {
-        this.erro = 'Erro ao cadastrar especialidade.';
-        this.salvando = false;
+        this.erro.set('Erro ao cadastrar especialidade.');
+        this.salvando.set(false);
       },
     });
   }

@@ -6,7 +6,7 @@
   </div>
 
   <div class="especialidades__section">
-    @if (especialidades.length === 0) {
+    @if (especialidades().length === 0) {
       <p class="especialidades__empty">Nenhuma especialidade cadastrada.</p>
     } @else {
       <table class="especialidades__table">
@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (e of especialidades; track e.id) {
+          @for (e of especialidades(); track e.id) {
             <tr>
               <td class="especialidades__name">{{ e.nome }}</td>
               <td>{{ e.descricao ?? '—' }}</td>
@@ -30,7 +30,7 @@
 
 </div>
 
-@if (showModal) {
+@if (showModal()) {
   <div class="modal-overlay" (click)="fecharModal()">
     <div class="modal" (click)="$event.stopPropagation()">
       <h2 class="modal__title">Nova especialidade</h2>
@@ -45,15 +45,15 @@
           <textarea class="modal__textarea" [(ngModel)]="form.descricao" placeholder="Descrição opcional..." rows="3"></textarea>
         </div>
 
-        @if (erro) {
-          <p class="modal__error">{{ erro }}</p>
+        @if (erro()) {
+          <p class="modal__error">{{ erro() }}</p>
         }
       </div>
 
       <div class="modal__footer">
         <button class="btn-ghost" (click)="fecharModal()">Cancelar</button>
-        <button class="btn-primary" [disabled]="salvando" (click)="salvar()">
-          {{ salvando ? 'Salvando...' : 'Cadastrar' }}
+        <button class="btn-primary" [disabled]="salvando()" (click)="salvar()">
+          {{ salvando() ? 'Salvando...' : 'Cadastrar' }}
         </button>
       </div>
     </div>
