@@ -13,7 +13,7 @@ export class EspecialidadeService {
 
   getAll(): Observable<Especialidade[]> {
     return (this.allCache$ ??= this.http
-      .get<Especialidade[]>(`${this.API}/especialidades`)
+      .get<Especialidade[]>(`${this.API}/especialidades/listar`)
       .pipe(shareReplay({ bufferSize: 1, refCount: false })));
   }
 
@@ -22,6 +22,6 @@ export class EspecialidadeService {
   }
 
   create(especialidade: Partial<Especialidade>): Observable<Especialidade> {
-    return this.http.post<Especialidade>(`${this.API}/especialidades`, especialidade);
+    return this.http.post<Especialidade>(`${this.API}/especialidades/criar-especialidade`, especialidade);
   }
 }

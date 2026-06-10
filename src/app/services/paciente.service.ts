@@ -25,7 +25,7 @@ export class PacienteService {
 
   getAll(): Observable<Paciente[]> {
     return (this.allCache$ ??= this.getPage({ page: 0, size: 1000 }).pipe(
-      map((p) => p.content),
+      map((p) => p.content ?? []),
       shareReplay({ bufferSize: 1, refCount: false }),
     ));
   }
