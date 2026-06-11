@@ -1,14 +1,22 @@
 import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, LowerCasePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, LowerCasePipe } from '@angular/common';
 import { ConsultaService } from '../../services/consulta.service';
 import { PacienteService } from '../../services/paciente.service';
 import { DentistaService } from '../../services/dentista.service';
-import { Consulta, StatusConsulta } from '../../models/consulta.model';
+import { ProcedimentoService } from '../../services/procedimento.service';
+import { Consulta, CriarConsultaBody, StatusConsulta } from '../../models/consulta.model';
 import { Paciente } from '../../models/paciente.model';
 import { Dentista } from '../../models/dentista.model';
+import { Procedimento } from '../../models/procedimento.model';
 import { PAGE_SIZE_OPTIONS } from '../../models/page.model';
+
+interface ItemForm {
+  idProcedimento: number;
+  nome: string;
+  valor: number;
+}
 
 interface NovaConsultaForm {
   idPaciente: number | null;
@@ -16,11 +24,12 @@ interface NovaConsultaForm {
   descricao: string;
   dataInicio: string;
   dataFim: string;
+  itens: ItemForm[];
 }
 
 @Component({
   selector: 'app-consultas',
-  imports: [FormsModule, DatePipe, LowerCasePipe],
+  imports: [FormsModule, DatePipe, LowerCasePipe, CurrencyPipe],
   templateUrl: './consultas.html',
   styleUrl: './consultas.scss',
 })
@@ -28,12 +37,15 @@ export class ConsultasComponent {
   protected readonly consultaService = inject(ConsultaService);
   private readonly pacienteService = inject(PacienteService);
   private readonly dentistaService = inject(DentistaService);
+  private readonly procedimentoService = inject(ProcedimentoService);
 
   protected readonly lista = this.consultaService.lista;
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
 
   protected pacientes: Paciente[] = [];
   protected dentistas: Dentista[] = [];
+  protected procedimentos: Procedimento[] = [];
+  protected procedimentoSelecionadoId: number | null = null;
 
   filtroStatus: StatusConsulta | '' = '';
   filtroNomePaciente = '';
@@ -52,8 +64,20 @@ export class ConsultasComponent {
   cancelando = false;
 
   constructor() {
-    this.pacienteService.getAll().pipe(takeUntilDestroyed()).subscribe((d) => (this.pacientes = d));
-    this.dentistaService.getAll().pipe(takeUntilDestroyed()).subscribe((d) => (this.dentistas = d));
+    this.pacienteService
+      .getAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe((d) => (this.pacientes = d));
+    this.dentistaService
+      .getAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe((d) => (this.dentistas = d));
+    this.procedimentoService
+      .getAll()
+      .pipe(takeUntilDestroyed())
+      .subscribe((d) => (this.procedimentos = d));
+    console.log(this.pacientes);
+    console.log(this.dentistas);
   }
 
   get consultasFiltradas(): Consulta[] {
@@ -80,6 +104,7 @@ export class ConsultasComponent {
 
   abrirModalNova(): void {
     this.novaConsulta = this.formVazio();
+    this.procedimentoSelecionadoId = null;
     this.erroNova = '';
     this.showModalNova = true;
   }
@@ -88,14 +113,45 @@ export class ConsultasComponent {
     this.showModalNova = false;
   }
 
+  adicionarItem(): void {
+    const proc = this.procedimentos.find((p) => p.id === this.procedimentoSelecionadoId);
+    if (!proc) return;
+    if (this.novaConsulta.itens.some((i) => i.idProcedimento === proc.id)) return;
+    this.novaConsulta.itens.push({
+      idProcedimento: proc.id,
+      nome: proc.nome,
+      valor: proc.valorBase ?? 0,
+    });
+    this.procedimentoSelecionadoId = null;
+  }
+
+  removerItem(index: number): void {
+    this.novaConsulta.itens.splice(index, 1);
+  }
+
+  get totalConsulta(): number {
+    return this.novaConsulta.itens.reduce((soma, i) => soma + (Number(i.valor) || 0), 0);
+  }
+
   salvarConsulta(): void {
     const { idPaciente, idDentista, descricao, dataInicio, dataFim } = this.novaConsulta;
     if (!idPaciente || !idDentista || !descricao || !dataInicio || !dataFim) {
       this.erroNova = 'Preencha todos os campos.';
       return;
     }
+    const body: CriarConsultaBody = {
+      idPaciente,
+      idDentista,
+      descricao,
+      dataInicio,
+      dataFim,
+      procedimentos: this.novaConsulta.itens.map((i) => ({
+        idProcedimento: i.idProcedimento,
+        valor: Number(i.valor) || 0,
+      })),
+    };
     this.salvando = true;
-    this.consultaService.create(this.novaConsulta as Partial<Consulta>).subscribe({
+    this.consultaService.create(body).subscribe({
       next: () => {
         this.consultaService.invalidateAll();
         this.lista.reload();
@@ -127,18 +183,20 @@ export class ConsultasComponent {
       return;
     }
     this.cancelando = true;
-    this.consultaService.cancelar(this.consultaParaCancelar!.id, this.motivoCancelamento).subscribe({
-      next: () => {
-        this.consultaService.invalidateAll();
-        this.lista.reload();
-        this.fecharModalCancelar();
-        this.cancelando = false;
-      },
-      error: () => {
-        this.erroCancelar = 'Erro ao cancelar consulta.';
-        this.cancelando = false;
-      },
-    });
+    this.consultaService
+      .cancelar(this.consultaParaCancelar!.id, this.motivoCancelamento)
+      .subscribe({
+        next: () => {
+          this.consultaService.invalidateAll();
+          this.lista.reload();
+          this.fecharModalCancelar();
+          this.cancelando = false;
+        },
+        error: () => {
+          this.erroCancelar = 'Erro ao cancelar consulta.';
+          this.cancelando = false;
+        },
+      });
   }
 
   finalizar(c: Consulta): void {
@@ -159,6 +217,6 @@ export class ConsultasComponent {
   }
 
   private formVazio(): NovaConsultaForm {
-    return { idPaciente: null, idDentista: null, descricao: '', dataInicio: '', dataFim: '' };
+    return { idPaciente: null, idDentista: null, descricao: '', dataInicio: '', dataFim: '', itens: [] };
   }
 }

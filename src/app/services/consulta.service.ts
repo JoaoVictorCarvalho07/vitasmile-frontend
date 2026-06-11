@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { Consulta } from '../models/consulta.model';
+import { Consulta, CriarConsultaBody } from '../models/consulta.model';
 import { Page, PageQuery } from '../models/page.model';
 import { PagedCollection } from '../core/paged-collection';
 
@@ -36,7 +36,7 @@ export class ConsultaService {
     this.allCache$ = undefined;
   }
 
-  create(body: Partial<Consulta>): Observable<Consulta> {
+  create(body: CriarConsultaBody): Observable<Consulta> {
     return this.http.post<Consulta>(`${this.API}/consultas`, body);
   }
 

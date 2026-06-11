@@ -99,6 +99,56 @@
     gap: 0.5rem;
   }
 
+  &__proc-add {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  &__proc-list {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__proc-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__proc-nome {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+  }
+
+  &__proc-valor {
+    width: 110px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    outline: none;
+
+    &:focus {
+      border-color: var(--indigo-500);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+    }
+  }
+
+  &__proc-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
   &__page-size {
     display: flex;
     align-items: center;

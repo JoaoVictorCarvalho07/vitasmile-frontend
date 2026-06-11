@@ -58,6 +58,7 @@
             <th>Data início</th>
             <th>Data fim</th>
             <th>Status</th>
+            <th>Valor</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -71,6 +72,7 @@
               <td>
                 <span class="pill pill--{{ c.status | lowercase }}">{{ c.status }}</span>
               </td>
+              <td>{{ c.valor != null ? (c.valor | currency:'BRL') : '—' }}</td>
               <td class="consultas__actions">
                 @if (c.status === 'AGENDADA') {
                   <button class="btn-action btn-action--danger" (click)="abrirModalCancelar(c)">
@@ -145,6 +147,50 @@
             <label class="modal__label">Data fim</label>
             <input class="modal__input" type="datetime-local" [(ngModel)]="novaConsulta.dataFim" />
           </div>
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">Procedimentos</label>
+          <div class="consultas__proc-add">
+            <select class="modal__input" [(ngModel)]="procedimentoSelecionadoId">
+              <option [ngValue]="null">Selecione um procedimento...</option>
+              @for (p of procedimentos; track p.id) {
+                <option [ngValue]="p.id">{{ p.nome }}</option>
+              }
+            </select>
+            <button
+              type="button"
+              class="btn-ghost"
+              [disabled]="procedimentoSelecionadoId == null"
+              (click)="adicionarItem()"
+            >
+              Adicionar
+            </button>
+          </div>
+
+          @if (novaConsulta.itens.length > 0) {
+            <div class="consultas__proc-list">
+              @for (item of novaConsulta.itens; track item.idProcedimento; let i = $index) {
+                <div class="consultas__proc-item">
+                  <span class="consultas__proc-nome">{{ item.nome }}</span>
+                  <input
+                    class="consultas__proc-valor"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    [(ngModel)]="item.valor"
+                  />
+                  <button type="button" class="btn-action btn-action--danger" (click)="removerItem(i)">
+                    Remover
+                  </button>
+                </div>
+              }
+              <div class="consultas__proc-total">
+                <span>Total</span>
+                <strong>{{ totalConsulta | currency:'BRL' }}</strong>
+              </div>
+            </div>
+          }
         </div>
 
         @if (erroNova) {
