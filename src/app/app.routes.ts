@@ -39,6 +39,11 @@ export const routes: Routes = [
           import('./pages/especialidades/especialidades').then(m => m.EspecialidadesComponent),
       },
       {
+        path: 'procedimentos',
+        loadComponent: () =>
+          import('./pages/procedimentos/procedimentos').then(m => m.ProcedimentosComponent),
+      },
+      {
         path: 'relatorios',
         loadComponent: () =>
           import('./pages/relatorios/relatorios').then(m => m.RelatoriosComponent),

@@ -1,0 +1,85 @@
+<div class="procedimentos">
+
+  <div class="procedimentos__header">
+    <h1 class="procedimentos__title">Procedimentos</h1>
+    <div class="procedimentos__header-actions">
+      <button class="btn-ghost" (click)="recarregar()">↻ Atualizar</button>
+      <button class="btn-primary" (click)="abrirModal()">+ Novo procedimento</button>
+    </div>
+  </div>
+
+  <div class="procedimentos__section">
+    @if (procedimentos().length === 0) {
+      <p class="procedimentos__empty">Nenhum procedimento cadastrado.</p>
+    } @else {
+      <table class="procedimentos__table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Especialidade</th>
+            <th>Valor base</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of procedimentos(); track p.id) {
+            <tr>
+              <td class="procedimentos__name">{{ p.nome }}</td>
+              <td>{{ p.especialidade ?? '—' }}</td>
+              <td>{{ p.valorBase != null ? (p.valorBase | currency:'BRL') : '—' }}</td>
+              <td>{{ p.descricao ?? '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+</div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">Novo procedimento</h2>
+
+      <div class="modal__form">
+        <div class="modal__field">
+          <label class="modal__label">Nome <span class="modal__required">*</span></label>
+          <input class="modal__input" type="text" [(ngModel)]="form.nome" placeholder="Ex: Limpeza" />
+        </div>
+
+        <div class="modal__row">
+          <div class="modal__field">
+            <label class="modal__label">Valor base</label>
+            <input class="modal__input" type="number" min="0" step="0.01" [(ngModel)]="form.valorBase" placeholder="0,00" />
+          </div>
+          <div class="modal__field">
+            <label class="modal__label">Especialidade</label>
+            <select class="modal__input" [(ngModel)]="form.idEspecialidade">
+              <option [ngValue]="null">Nenhuma</option>
+              @for (e of especialidades(); track e.id) {
+                <option [ngValue]="e.id">{{ e.nome }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="modal__field">
+          <label class="modal__label">Descrição</label>
+          <textarea class="modal__input modal__textarea" [(ngModel)]="form.descricao" placeholder="Descrição opcional..."></textarea>
+        </div>
+
+        @if (erro()) {
+          <p class="modal__error">{{ erro() }}</p>
+        }
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModal()">Cancelar</button>
+        <button class="btn-primary" [disabled]="salvando()" (click)="salvar()">
+          {{ salvando() ? 'Salvando...' : 'Cadastrar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
