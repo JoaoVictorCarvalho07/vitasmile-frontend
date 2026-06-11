@@ -6,6 +6,7 @@
       <p class="dashboard__date">{{ dataHoje }}</p>
     </div>
     <div class="dashboard__user">
+      <button class="btn-ghost" (click)="recarregar()">↻ Atualizar</button>
       <span class="dashboard__nome">{{ nome }}</span>
       <span class="dashboard__badge dashboard__badge--{{ perfil | lowercase }}">{{ perfil }}</span>
     </div>

@@ -2,7 +2,10 @@
 
   <div class="pacientes__header">
     <h1 class="pacientes__title">Pacientes</h1>
-    <button class="btn-primary" (click)="abrirModalCriar()">+ Novo paciente</button>
+    <div class="pacientes__header-actions">
+      <button class="btn-ghost" [disabled]="lista.loading()" (click)="lista.reload()">↻ Atualizar</button>
+      <button class="btn-primary" (click)="abrirModalCriar()">+ Novo paciente</button>
+    </div>
   </div>
 
   <div class="pacientes__search">

@@ -2,7 +2,10 @@
 
   <div class="especialidades__header">
     <h1 class="especialidades__title">Especialidades</h1>
-    <button class="btn-primary" (click)="abrirModal()">+ Nova especialidade</button>
+    <div class="especialidades__header-actions">
+      <button class="btn-ghost" (click)="recarregar()">↻ Atualizar</button>
+      <button class="btn-primary" (click)="abrirModal()">+ Nova especialidade</button>
+    </div>
   </div>
 
   <div class="especialidades__section">

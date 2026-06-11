@@ -2,7 +2,10 @@
 
   <div class="consultas__header">
     <h1 class="consultas__title">Consultas</h1>
-    <button class="btn-primary" (click)="abrirModalNova()">+ Nova consulta</button>
+    <div class="consultas__header-actions">
+      <button class="btn-ghost" [disabled]="lista.loading()" (click)="lista.reload()">↻ Atualizar</button>
+      <button class="btn-primary" (click)="abrirModalNova()">+ Nova consulta</button>
+    </div>
   </div>
 
   <div class="consultas__filters">

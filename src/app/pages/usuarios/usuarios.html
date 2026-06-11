@@ -2,7 +2,10 @@
 
   <div class="usuarios__header">
     <h1 class="usuarios__title">Usuários</h1>
-    <button class="btn-primary" (click)="abrirModalCriar()">+ Novo usuário</button>
+    <div class="usuarios__header-actions">
+      <button class="btn-ghost" [disabled]="lista.loading()" (click)="lista.reload()">↻ Atualizar</button>
+      <button class="btn-primary" (click)="abrirModalCriar()">+ Novo usuário</button>
+    </div>
   </div>
 
   <div class="usuarios__search">

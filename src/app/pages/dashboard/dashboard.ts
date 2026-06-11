@@ -1,5 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs/operators';
 import { DatePipe, LowerCasePipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ConsultaService } from '../../services/consulta.service';
@@ -20,7 +21,17 @@ export class DashboardComponent {
   nome = this.auth.getNome() ?? '';
   perfil = this.auth.getPerfil() ?? '';
 
-  private todasConsultas = toSignal(this.consultaService.getAll(), { initialValue: [] as Consulta[] });
+  private reload = signal(0);
+  private todasConsultas = toSignal(
+    toObservable(this.reload).pipe(switchMap(() => this.consultaService.getAll())),
+    { initialValue: [] as Consulta[] },
+  );
+
+  recarregar(): void {
+    this.consultaService.invalidateAll();
+    this.pacienteService.lista.reload();
+    this.reload.update((t) => t + 1);
+  }
 
   protected consultasHoje = computed(() => {
     const hoje = new Date().toDateString();

@@ -2,6 +2,7 @@
 
   <div class="dentistas__header">
     <h1 class="dentistas__title">Dentistas</h1>
+    <button class="btn-ghost" [disabled]="lista.loading()" (click)="lista.reload()">↻ Atualizar</button>
   </div>
 
   <div class="dentistas__search">

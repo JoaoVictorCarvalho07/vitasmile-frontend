@@ -30,6 +30,11 @@ export class EspecialidadesComponent {
   salvando = signal(false);
   form: EspecialidadeForm = this.formVazio();
 
+  recarregar(): void {
+    this.especialidadeService.invalidateAll();
+    this.reload.update((t) => t + 1);
+  }
+
   abrirModal(): void {
     this.form = this.formVazio();
     this.erro.set('');
