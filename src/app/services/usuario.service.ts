@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { Usuario } from '../models/usuario.model';
 import { Page, PageQuery } from '../models/page.model';
 import { PagedCollection } from '../core/paged-collection';
@@ -12,12 +13,21 @@ export class UsuarioService {
 
   readonly lista = new PagedCollection<Usuario>((query) => this.getPage(query));
 
+  private allCache$?: Observable<Usuario[]>;
+
   private getPage(query: PageQuery): Observable<Page<Usuario>> {
     let params = new HttpParams().set('page', query.page).set('size', query.size);
     if (query.sort) {
       params = params.set('sort', query.sort);
     }
     return this.http.get<Page<Usuario>>(`${this.API}/usuarios`, { params });
+  }
+
+  getAll(): Observable<Usuario[]> {
+    return (this.allCache$ ??= this.getPage({ page: 0, size: 1000 }).pipe(
+      map((p) => p.content ?? []),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    ));
   }
 
   create(usuario: Partial<Usuario> & { senha?: string }): Observable<Usuario> {

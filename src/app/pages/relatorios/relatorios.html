@@ -1,1 +1,267 @@
-<h1>Relatórios</h1>
+<div class="relatorios">
+  <div class="relatorios__header">
+    <h1 class="relatorios__title">Relatórios</h1>
+  </div>
+
+  <div class="relatorios__filtros">
+    <div class="relatorios__filtro">
+      <label>De</label>
+      <input type="date" [(ngModel)]="filtro.inicio" />
+    </div>
+    <div class="relatorios__filtro">
+      <label>Até</label>
+      <input type="date" [(ngModel)]="filtro.fim" />
+    </div>
+    <div class="relatorios__filtro">
+      <label>Dentista</label>
+      <select [(ngModel)]="filtro.idDentista">
+        <option [ngValue]="null">Todos</option>
+        @for (d of dentistas; track d.id) {
+          <option [ngValue]="d.id">{{ d.nome }}</option>
+        }
+      </select>
+    </div>
+    <div class="relatorios__filtro">
+      <label>Especialidade</label>
+      <select [(ngModel)]="filtro.idEspecialidade">
+        <option [ngValue]="null">Todas</option>
+        @for (e of especialidades; track e.id) {
+          <option [ngValue]="e.id">{{ e.nome }}</option>
+        }
+      </select>
+    </div>
+    <div class="relatorios__filtro">
+      <label>Procedimento</label>
+      <select [(ngModel)]="filtro.idProcedimento">
+        <option [ngValue]="null">Todos</option>
+        @for (p of procedimentos; track p.id) {
+          <option [ngValue]="p.id">{{ p.nome }}</option>
+        }
+      </select>
+    </div>
+    <div class="relatorios__filtro">
+      <label>Paciente</label>
+      <select [(ngModel)]="filtro.idPaciente">
+        <option [ngValue]="null">Todos</option>
+        @for (p of pacientes; track p.id) {
+          <option [ngValue]="p.id">{{ p.nome }}</option>
+        }
+      </select>
+    </div>
+    <div class="relatorios__filtro">
+      <label>Usuário</label>
+      <select [(ngModel)]="filtro.idUsuario">
+        <option [ngValue]="null">Todos</option>
+        @for (u of usuarios; track u.id) {
+          <option [ngValue]="u.id">{{ u.nome }}</option>
+        }
+      </select>
+    </div>
+    <div class="relatorios__filtro">
+      <label>Status</label>
+      <select [(ngModel)]="filtro.status">
+        <option value="">Todos</option>
+        <option value="AGENDADA">Agendada</option>
+        <option value="FINALIZADA">Finalizada</option>
+        <option value="CANCELADA">Cancelada</option>
+      </select>
+    </div>
+    <div class="relatorios__filtro-actions">
+      <button class="btn-ghost" (click)="limpar()">Limpar</button>
+      <button class="btn-primary" (click)="buscar()">Buscar</button>
+    </div>
+  </div>
+
+  @if (erro()) {
+    <p class="relatorios__error">{{ erro() }}</p>
+  }
+
+  @if (buscou()) {
+    @if (resumo(); as r) {
+      <div class="relatorios__cards">
+        <div class="relatorios__card">
+          <p class="relatorios__card-label">Faturado (realizado)</p>
+          <p class="relatorios__card-value relatorios__card-value--money">
+            {{ r.faturado | currency: 'BRL' }}
+          </p>
+        </div>
+        <div class="relatorios__card">
+          <p class="relatorios__card-label">Consultas finalizadas</p>
+          <p class="relatorios__card-value">{{ r.qtdFinalizadas }}</p>
+        </div>
+        <div class="relatorios__card">
+          <p class="relatorios__card-label">Ticket médio</p>
+          <p class="relatorios__card-value">{{ r.ticketMedio | currency: 'BRL' }}</p>
+        </div>
+      </div>
+
+      <div class="relatorios__section">
+        <p class="relatorios__section-title">
+          Faturamento por dentista
+          <span class="relatorios__hint">(clique num dentista para ver os procedimentos)</span>
+        </p>
+        @if (r.porDentista.length === 0) {
+          <p class="relatorios__empty">Sem faturamento no período.</p>
+        } @else {
+          <table class="relatorios__table">
+            <thead>
+              <tr>
+                <th>Dentista</th>
+                <th>Finalizadas</th>
+                <th>Faturado</th>
+                <th>Ticket médio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of r.porDentista; track d.idDentista) {
+                <tr class="relatorios__row--click" (click)="abrirModalDentista(d)">
+                  <td class="relatorios__name">{{ d.nomeDentista }}</td>
+                  <td>{{ d.quantidade }}</td>
+                  <td>{{ d.faturado | currency: 'BRL' }}</td>
+                  <td>{{ ticket(d.faturado, d.quantidade) | currency: 'BRL' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    }
+
+    @if (filtro.idProcedimento != null) {
+      <div class="relatorios__section">
+        <p class="relatorios__section-title">
+          Dentistas que realizaram: {{ procedimentoSelecionadoNome() }}
+        </p>
+        @if (dentistasDoProcedimento().length === 0) {
+          <p class="relatorios__empty">Nenhum dentista realizou este procedimento no período.</p>
+        } @else {
+          <table class="relatorios__table">
+            <thead>
+              <tr>
+                <th>Dentista</th>
+                <th>Quantidade</th>
+                <th>Total</th>
+                <th>Ticket médio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of dentistasDoProcedimento(); track d.dentista) {
+                <tr>
+                  <td class="relatorios__name">{{ d.dentista }}</td>
+                  <td>{{ d.quantidade }}</td>
+                  <td>{{ d.total | currency: 'BRL' }}</td>
+                  <td>{{ ticket(d.total, d.quantidade) | currency: 'BRL' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    }
+
+    <div class="relatorios__section">
+      <div class="relatorios__section-head">
+        <p class="relatorios__section-title">
+          Consultas
+          @if (consultas(); as p) {
+            <span class="relatorios__hint">· {{ p.totalElements }} encontradas</span>
+          }
+        </p>
+        <label class="relatorios__page-size">
+          Por página:
+          <select [ngModel]="pageSize()" (ngModelChange)="mudarTamanho($event)">
+            @for (opt of tamanhos; track opt) {
+              <option [ngValue]="opt">{{ opt }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      @if (carregando()) {
+        <p class="relatorios__empty">Carregando...</p>
+      } @else if (consultas(); as p) {
+        @if (p.content.length === 0) {
+          <p class="relatorios__empty">Nenhuma consulta encontrada.</p>
+        } @else {
+          <table class="relatorios__table">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Dentista</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of p.content; track c.id) {
+                <tr>
+                  <td class="relatorios__name">{{ c.nomePaciente ?? '—' }}</td>
+                  <td>{{ c.nomeDentista ?? '—' }}</td>
+                  <td>{{ c.dataInicio | date: 'dd/MM/yyyy HH:mm' }}</td>
+                  <td>
+                    <span class="pill pill--{{ c.status.toLowerCase() }}">{{ c.status }}</span>
+                  </td>
+                  <td>{{ c.valor != null ? (c.valor | currency: 'BRL') : '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="relatorios__pager">
+            <span class="relatorios__hint">Página {{ p.number + 1 }} de {{ p.totalPages }}</span>
+            <div class="relatorios__pager-actions">
+              <button class="btn-ghost" [disabled]="p.first" (click)="anterior()">Anterior</button>
+              <button class="btn-ghost" [disabled]="p.last" (click)="proxima()">Próxima</button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  } @else {
+    <p class="relatorios__empty">Defina os filtros e clique em Buscar.</p>
+  }
+</div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2 class="modal__title">Procedimentos · {{ dentistaModal()?.nomeDentista }}</h2>
+      <p class="modal__subtitle">
+        Faturado {{ dentistaModal()?.faturado | currency: 'BRL' }} · ticket médio
+        {{ ticket(dentistaModal()!.faturado, dentistaModal()!.quantidade) | currency: 'BRL' }}
+      </p>
+
+      @if (carregandoModal()) {
+        <p class="relatorios__empty">Carregando...</p>
+      } @else if (procedimentosModal().length === 0) {
+        <p class="relatorios__empty">Nenhum procedimento finalizado no período.</p>
+      } @else {
+        <table class="relatorios__table">
+          <thead>
+            <tr>
+              <th>Procedimento</th>
+              <th>Qtd</th>
+              <th>Total</th>
+              <th>Ticket médio</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of procedimentosModal(); track p.procedimento) {
+              <tr>
+                <td class="relatorios__name">{{ p.procedimento }}</td>
+                <td>{{ p.quantidade }}</td>
+                <td>{{ p.total | currency: 'BRL' }}</td>
+                <td>{{ ticket(p.total, p.quantidade) | currency: 'BRL' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+
+      <div class="modal__footer">
+        <button class="btn-ghost" (click)="fecharModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+}
