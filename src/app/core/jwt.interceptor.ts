@@ -15,7 +15,8 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((err) => {
-      if (err.status === 401) {
+      const tokenExpirado = err.status === 401 && err.headers?.get('X-Token-Expired') === 'true';
+      if (tokenExpirado) {
         auth.logout();
         router.navigate(['/login']);
       }
