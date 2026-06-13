@@ -17,14 +17,21 @@
       <p class="dashboard__card-value">{{ totalHoje() }}</p>
       <p class="dashboard__card-label">Consultas hoje</p>
     </div>
-    <div class="dashboard__card">
-      <p class="dashboard__card-value">{{ totalPendentes() }}</p>
-      <p class="dashboard__card-label">Pendentes</p>
-    </div>
-    <div class="dashboard__card">
-      <p class="dashboard__card-value">{{ totalPacientes() }}</p>
-      <p class="dashboard__card-label">Pacientes ativos</p>
-    </div>
+    @if (isAdmin) {
+      <div class="dashboard__card">
+        <p class="dashboard__card-value">{{ totalPendentes() }}</p>
+        <p class="dashboard__card-label">Pendentes</p>
+      </div>
+      <div class="dashboard__card">
+        <p class="dashboard__card-value">{{ totalPacientes() }}</p>
+        <p class="dashboard__card-label">Pacientes ativos</p>
+      </div>
+    } @else {
+      <div class="dashboard__card">
+        <p class="dashboard__card-value">{{ totalPendentesSemana() }}</p>
+        <p class="dashboard__card-label">Pendentes na semana</p>
+      </div>
+    }
   </div>
 
   <div class="dashboard__section">

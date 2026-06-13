@@ -28,7 +28,7 @@ export interface CriarConsultaItem {
 
 export interface CriarConsultaBody {
   idPaciente: number;
-  idDentista: number;
+  idDentista: number | null;
   descricao: string;
   dataInicio: string;
   dataFim: string;

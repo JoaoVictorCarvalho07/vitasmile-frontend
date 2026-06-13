@@ -13,7 +13,15 @@ export class SidebarComponent {
   constructor(private auth: AuthService, private router: Router) {}
 
   get isAdmin(): boolean {
-    return this.auth.getPerfil() === 'ADMIN';
+    return this.auth.isAdmin();
+  }
+
+  get isDentista(): boolean {
+    return this.auth.isDentista();
+  }
+
+  get isPaciente(): boolean {
+    return this.auth.isPaciente();
   }
 
   logout(): void {

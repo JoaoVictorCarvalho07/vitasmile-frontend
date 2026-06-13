@@ -6,6 +6,7 @@ import { ConsultaService } from '../../services/consulta.service';
 import { PacienteService } from '../../services/paciente.service';
 import { DentistaService } from '../../services/dentista.service';
 import { ProcedimentoService } from '../../services/procedimento.service';
+import { AuthService } from '../../services/auth.service';
 import { Consulta, CriarConsultaBody, StatusConsulta } from '../../models/consulta.model';
 import { Paciente } from '../../models/paciente.model';
 import { Dentista } from '../../models/dentista.model';
@@ -38,9 +39,12 @@ export class ConsultasComponent {
   private readonly pacienteService = inject(PacienteService);
   private readonly dentistaService = inject(DentistaService);
   private readonly procedimentoService = inject(ProcedimentoService);
+  private readonly auth = inject(AuthService);
 
   protected readonly lista = this.consultaService.lista;
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
+  protected readonly isPaciente = this.auth.isPaciente();
+  protected readonly isDentista = this.auth.isDentista();
 
   protected pacientes: Paciente[] = [];
   protected dentistas: Dentista[] = [];
@@ -135,7 +139,7 @@ export class ConsultasComponent {
 
   salvarConsulta(): void {
     const { idPaciente, idDentista, descricao, dataInicio, dataFim } = this.novaConsulta;
-    if (!idPaciente || !idDentista || !descricao || !dataInicio || !dataFim) {
+    if (!idPaciente || (!this.isDentista && !idDentista) || !descricao || !dataInicio || !dataFim) {
       this.erroNova = 'Preencha todos os campos.';
       return;
     }

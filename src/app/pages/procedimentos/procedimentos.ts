@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { ProcedimentoService } from '../../services/procedimento.service';
 import { EspecialidadeService } from '../../services/especialidade.service';
+import { AuthService } from '../../services/auth.service';
 import { Procedimento } from '../../models/procedimento.model';
 import { Especialidade } from '../../models/especialidade.model';
 
@@ -24,6 +25,9 @@ interface ProcedimentoForm {
 export class ProcedimentosComponent {
   private procedimentoService = inject(ProcedimentoService);
   private especialidadeService = inject(EspecialidadeService);
+  private auth = inject(AuthService);
+
+  protected readonly isAdmin = this.auth.isAdmin();
 
   private readonly reload = signal(0);
   readonly procedimentos = toSignal(

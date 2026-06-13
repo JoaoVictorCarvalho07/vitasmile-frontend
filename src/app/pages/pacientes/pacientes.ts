@@ -1,7 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { PacienteService } from '../../services/paciente.service';
+import { AuthService } from '../../services/auth.service';
 import { Paciente } from '../../models/paciente.model';
 import { PAGE_SIZE_OPTIONS } from '../../models/page.model';
 
@@ -21,9 +23,26 @@ interface PacienteForm {
 })
 export class PacientesComponent {
   private pacienteService = inject(PacienteService);
+  private auth = inject(AuthService);
 
   readonly lista = this.pacienteService.lista;
   readonly tamanhos = PAGE_SIZE_OPTIONS;
+  protected readonly isAdmin = this.auth.isAdmin();
+  protected readonly isDentista = this.auth.isDentista();
+  private readonly meusPacientesIds = signal<ReadonlySet<number>>(new Set());
+
+  constructor() {
+    if (this.isDentista) {
+      this.pacienteService
+        .meusIds()
+        .pipe(takeUntilDestroyed())
+        .subscribe((ids) => this.meusPacientesIds.set(new Set(ids)));
+    }
+  }
+
+  podeEditar(id: number): boolean {
+    return this.isAdmin || this.meusPacientesIds().has(id);
+  }
 
   busca = signal('');
   showModal = signal(false);

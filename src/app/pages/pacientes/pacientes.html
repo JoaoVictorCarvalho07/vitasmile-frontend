@@ -55,9 +55,11 @@
               <td>{{ p.telefone ?? '—' }}</td>
               <td>{{ p.dataCriacao | date:'dd/MM/yyyy' }}</td>
               <td>
-                <button class="btn-action btn-action--edit" (click)="abrirModalEditar(p)">
-                  Editar
-                </button>
+                @if (podeEditar(p.id)) {
+                  <button class="btn-action btn-action--edit" (click)="abrirModalEditar(p)">
+                    Editar
+                  </button>
+                }
               </td>
             </tr>
           }

@@ -30,6 +30,10 @@ export class PacienteService {
     ));
   }
 
+  meusIds(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.API}/pacientes/meus-ids`);
+  }
+
   create(paciente: Partial<Paciente>): Observable<Paciente> {
     return this.http.post<Paciente>(`${this.API}/pacientes/cria-paciente`, paciente);
   }

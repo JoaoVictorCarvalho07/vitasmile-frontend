@@ -7,21 +7,27 @@
   </div>
 
   <nav class="sidebar__nav">
-    <a routerLink="/dashboard" routerLinkActive="sidebar__item--active" class="sidebar__item">
-      Dashboard
-    </a>
+    @if (isAdmin || isDentista) {
+      <a routerLink="/dashboard" routerLinkActive="sidebar__item--active" class="sidebar__item">
+        Dashboard
+      </a>
+    }
     <a routerLink="/consultas" routerLinkActive="sidebar__item--active" class="sidebar__item">
       Consultas
     </a>
-    <a routerLink="/pacientes" routerLinkActive="sidebar__item--active" class="sidebar__item">
-      Pacientes
-    </a>
-    <a routerLink="/dentistas" routerLinkActive="sidebar__item--active" class="sidebar__item">
-      Dentistas
-    </a>
-    <a routerLink="/especialidades" routerLinkActive="sidebar__item--active" class="sidebar__item">
-      Especialidades
-    </a>
+    @if (isAdmin || isDentista) {
+      <a routerLink="/pacientes" routerLinkActive="sidebar__item--active" class="sidebar__item">
+        Pacientes
+      </a>
+    }
+    @if (isAdmin) {
+      <a routerLink="/dentistas" routerLinkActive="sidebar__item--active" class="sidebar__item">
+        Dentistas
+      </a>
+      <a routerLink="/especialidades" routerLinkActive="sidebar__item--active" class="sidebar__item">
+        Especialidades
+      </a>
+    }
     <a routerLink="/procedimentos" routerLinkActive="sidebar__item--active" class="sidebar__item">
       Procedimentos
     </a>

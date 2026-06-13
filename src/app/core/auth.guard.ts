@@ -7,3 +7,10 @@ export const authGuard = () => {
   const router = inject(Router);
   return auth.isLoggedIn() ? true : router.createUrlTree(['/login']);
 };
+
+export const roleGuard = (perfis: string[]) => () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (!auth.isLoggedIn()) return router.createUrlTree(['/login']);
+  return perfis.includes(auth.getPerfil() ?? '') ? true : router.createUrlTree(['/consultas']);
+};

@@ -20,6 +20,7 @@ export class DashboardComponent {
 
   nome = this.auth.getNome() ?? '';
   perfil = this.auth.getPerfil() ?? '';
+  protected readonly isAdmin = this.auth.isAdmin();
 
   private reload = signal(0);
   private todasConsultas = toSignal(
@@ -44,7 +45,27 @@ export class DashboardComponent {
   protected totalPendentes = computed(() =>
     this.todasConsultas().filter((c) => c.status === 'AGENDADA').length,
   );
+  protected totalPendentesSemana = computed(() => {
+    const inicio = this.inicioDaSemana();
+    const fim = new Date(inicio);
+    fim.setDate(inicio.getDate() + 7);
+    return this.todasConsultas().filter((c) => {
+      if (c.status !== 'AGENDADA') return false;
+      const data = new Date(c.dataInicio);
+      return data >= inicio && data < fim;
+    }).length;
+  });
   protected totalPacientes = computed(() => this.pacienteService.lista.totalElements());
+
+  private inicioDaSemana(): Date {
+    const hoje = new Date();
+    const diaSemana = hoje.getDay();
+    const diffParaSegunda = (diaSemana === 0 ? -6 : 1) - diaSemana;
+    const segunda = new Date(hoje);
+    segunda.setDate(hoje.getDate() + diffParaSegunda);
+    segunda.setHours(0, 0, 0, 0);
+    return segunda;
+  }
 
   get dataHoje(): string {
     return new Date().toLocaleDateString('pt-BR', {

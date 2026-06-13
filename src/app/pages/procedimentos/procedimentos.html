@@ -4,9 +4,17 @@
     <h1 class="procedimentos__title">Procedimentos</h1>
     <div class="procedimentos__header-actions">
       <button class="btn-ghost" (click)="recarregar()">↻ Atualizar</button>
-      <button class="btn-primary" (click)="abrirModal()">+ Novo procedimento</button>
+      @if (isAdmin) {
+        <button class="btn-primary" (click)="abrirModal()">+ Novo procedimento</button>
+      }
     </div>
   </div>
+
+  <p class="procedimentos__aviso">
+    Os valores exibidos são apenas o <strong>preço base</strong> de cada procedimento e
+    podem variar para cima ou para baixo conforme o profissional, a disponibilidade e a
+    avaliação caso a caso.
+  </p>
 
   <div class="procedimentos__section">
     @if (procedimentos().length === 0) {

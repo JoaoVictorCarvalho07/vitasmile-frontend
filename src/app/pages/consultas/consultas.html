@@ -4,41 +4,45 @@
     <h1 class="consultas__title">Consultas</h1>
     <div class="consultas__header-actions">
       <button class="btn-ghost" [disabled]="lista.loading()" (click)="lista.reload()">↻ Atualizar</button>
-      <button class="btn-primary" (click)="abrirModalNova()">+ Nova consulta</button>
+      @if (!isPaciente) {
+        <button class="btn-primary" (click)="abrirModalNova()">+ Nova consulta</button>
+      }
     </div>
   </div>
 
-  <div class="consultas__filters">
-    <input
-      class="consultas__filter-input"
-      type="text"
-      placeholder="Paciente"
-      [(ngModel)]="filtroNomePaciente"
-    />
-    <input
-      class="consultas__filter-input"
-      type="text"
-      placeholder="Dentista"
-      [(ngModel)]="filtroNomeDentista"
-    />
-    <select class="consultas__filter-input" [(ngModel)]="filtroStatus">
-      <option value="">Todos os status</option>
-      <option value="AGENDADA">Agendada</option>
-      <option value="FINALIZADA">Finalizada</option>
-      <option value="CANCELADA">Cancelada</option>
-    </select>
-    <input class="consultas__filter-input" type="date" [(ngModel)]="filtroData" />
-    <button class="consultas__filter-clear" (click)="limparFiltros()">Limpar</button>
-    <div class="consultas__page-size">
-      <label>Exibir</label>
-      <select [ngModel]="lista.pageSize()" (ngModelChange)="lista.setSize($event)">
-        @for (opt of pageSizeOptions; track opt) {
-          <option [ngValue]="opt">{{ opt }}</option>
-        }
+  @if (!isPaciente) {
+    <div class="consultas__filters">
+      <input
+        class="consultas__filter-input"
+        type="text"
+        placeholder="Paciente"
+        [(ngModel)]="filtroNomePaciente"
+      />
+      <input
+        class="consultas__filter-input"
+        type="text"
+        placeholder="Dentista"
+        [(ngModel)]="filtroNomeDentista"
+      />
+      <select class="consultas__filter-input" [(ngModel)]="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="AGENDADA">Agendada</option>
+        <option value="FINALIZADA">Finalizada</option>
+        <option value="CANCELADA">Cancelada</option>
       </select>
-      <span>por página</span>
+      <input class="consultas__filter-input" type="date" [(ngModel)]="filtroData" />
+      <button class="consultas__filter-clear" (click)="limparFiltros()">Limpar</button>
+      <div class="consultas__page-size">
+        <label>Exibir</label>
+        <select [ngModel]="lista.pageSize()" (ngModelChange)="lista.setSize($event)">
+          @for (opt of pageSizeOptions; track opt) {
+            <option [ngValue]="opt">{{ opt }}</option>
+          }
+        </select>
+        <span>por página</span>
+      </div>
     </div>
-  </div>
+  }
 
   @if (lista.error()) {
     <p class="consultas__error">{{ lista.error() }}</p>
@@ -78,9 +82,11 @@
                   <button class="btn-action btn-action--danger" (click)="abrirModalCancelar(c)">
                     Cancelar
                   </button>
-                  <button class="btn-action btn-action--success" (click)="finalizar(c)">
-                    Finalizar
-                  </button>
+                  @if (!isPaciente) {
+                    <button class="btn-action btn-action--success" (click)="finalizar(c)">
+                      Finalizar
+                    </button>
+                  }
                 }
               </td>
             </tr>
@@ -119,15 +125,17 @@
           </select>
         </div>
 
-        <div class="modal__field">
-          <label class="modal__label">Dentista</label>
-          <select class="modal__input" [(ngModel)]="novaConsulta.idDentista">
-            <option [ngValue]="null">Selecione...</option>
-            @for (d of dentistas; track d.id) {
-              <option [ngValue]="d.id">{{ d.nome }}</option>
-            }
-          </select>
-        </div>
+        @if (!isDentista) {
+          <div class="modal__field">
+            <label class="modal__label">Dentista</label>
+            <select class="modal__input" [(ngModel)]="novaConsulta.idDentista">
+              <option [ngValue]="null">Selecione...</option>
+              @for (d of dentistas; track d.id) {
+                <option [ngValue]="d.id">{{ d.nome }}</option>
+              }
+            </select>
+          </div>
+        }
 
         <div class="modal__field">
           <label class="modal__label">Descrição</label>

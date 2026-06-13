@@ -41,4 +41,16 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  isAdmin(): boolean {
+    return this.getPerfil() === 'ADMIN';
+  }
+
+  isDentista(): boolean {
+    return this.getPerfil() === 'DENTISTA';
+  }
+
+  isPaciente(): boolean {
+    return this.getPerfil() === 'PACIENTE';
+  }
 }
