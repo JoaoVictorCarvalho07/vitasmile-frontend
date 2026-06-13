@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -8,8 +8,8 @@ import { AuthRequest, AuthResponse } from '../models/auth.model';
 export class AuthService {
   private readonly API = 'http://localhost:8080';
 
-  constructor(private http: HttpClient) {}
-
+  private readonly http: HttpClient = inject(HttpClient);
+  
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API}/auth/login`, credentials).pipe(
       tap(res => {
