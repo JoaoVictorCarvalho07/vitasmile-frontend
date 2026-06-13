@@ -50,6 +50,11 @@ export const routes: Routes = [
           import('./pages/procedimentos/procedimentos').then(m => m.ProcedimentosComponent),
       },
       {
+        path: 'contato',
+        loadComponent: () =>
+          import('./pages/contato/contato').then(m => m.ContatoComponent),
+      },
+      {
         path: 'relatorios',
         canActivate: [roleGuard(['ADMIN'])],
         loadComponent: () =>

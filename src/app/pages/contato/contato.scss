@@ -1,0 +1,127 @@
+.contato {
+  &__header {
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  &__intro {
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  &__card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+
+    &--info {
+      background: var(--indigo-50);
+    }
+  }
+
+  &__card-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  &__required {
+    color: var(--danger);
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    outline: none;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: #fff;
+
+    &:focus {
+      border-color: var(--indigo-500);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+    }
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  &__error {
+    font-size: 0.875rem;
+    color: var(--danger);
+  }
+
+  &__send {
+    align-self: flex-start;
+  }
+
+  &__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  &__item-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--indigo-700);
+  }
+
+  &__item-value {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+  }
+}
+
+@media (max-width: 768px) {
+  .contato__grid {
+    grid-template-columns: 1fr;
+  }
+}

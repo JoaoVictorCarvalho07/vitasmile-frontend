@@ -1,0 +1,68 @@
+<div class="contato">
+
+  <div class="contato__header">
+    <h1 class="contato__title">Contato</h1>
+  </div>
+
+  <p class="contato__intro">
+    Precisa falar com a clínica? Envie uma mensagem pelo WhatsApp ou use os dados abaixo.
+  </p>
+
+  <div class="contato__grid">
+
+    <div class="contato__card">
+      <h2 class="contato__card-title">Fale pelo WhatsApp</h2>
+
+      <div class="contato__form">
+        <div class="contato__field">
+          <label class="contato__label">Seu nome</label>
+          <input class="contato__input" type="text" [(ngModel)]="form.nome" placeholder="Como podemos te chamar" />
+        </div>
+
+        <div class="contato__field">
+          <label class="contato__label">Assunto</label>
+          <input class="contato__input" type="text" [(ngModel)]="form.assunto" placeholder="Ex: Agendamento, dúvida..." />
+        </div>
+
+        <div class="contato__field">
+          <label class="contato__label">Mensagem <span class="contato__required">*</span></label>
+          <textarea
+            class="contato__input contato__textarea"
+            [(ngModel)]="form.mensagem"
+            placeholder="Escreva sua mensagem..."
+          ></textarea>
+        </div>
+
+        @if (erro) {
+          <p class="contato__error">{{ erro }}</p>
+        }
+
+        <button class="btn-primary contato__send" (click)="enviar()">Enviar pelo WhatsApp</button>
+      </div>
+    </div>
+
+    <div class="contato__card contato__card--info">
+      <h2 class="contato__card-title">Outros canais</h2>
+      <ul class="contato__list">
+        <li class="contato__item">
+          <span class="contato__item-label">WhatsApp</span>
+          <span class="contato__item-value">{{ whatsappLabel }}</span>
+        </li>
+        <li class="contato__item">
+          <span class="contato__item-label">E-mail</span>
+          <span class="contato__item-value">{{ email }}</span>
+        </li>
+        <li class="contato__item">
+          <span class="contato__item-label">Endereço</span>
+          <span class="contato__item-value">{{ endereco }}</span>
+        </li>
+        <li class="contato__item">
+          <span class="contato__item-label">Atendimento</span>
+          <span class="contato__item-value">{{ horario }}</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
