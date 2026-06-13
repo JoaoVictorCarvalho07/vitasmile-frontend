@@ -217,6 +217,13 @@ export class ConsultasComponent {
   }
 
   private formVazio(): NovaConsultaForm {
-    return { idPaciente: null, idDentista: null, descricao: '', dataInicio: '', dataFim: '', itens: [] };
+    return {
+      idPaciente: null,
+      idDentista: null,
+      descricao: '',
+      dataInicio: '',
+      dataFim: '',
+      itens: [],
+    };
   }
 }
