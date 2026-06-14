@@ -1,0 +1,8 @@
+<div class="toast-container">
+  @for (t of toast.toasts(); track t.id) {
+    <div class="toast toast--{{ t.tipo }}">
+      <span class="toast__text">{{ t.texto }}</span>
+      <button class="toast__close" (click)="toast.remover(t.id)" aria-label="Fechar">×</button>
+    </div>
+  }
+</div>
