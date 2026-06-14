@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { Procedimento } from '../models/procedimento.model';
+import { environment } from '../../environments/environment';
 
 interface ProcedimentoInput {
   nome: string;
@@ -13,7 +14,7 @@ interface ProcedimentoInput {
 
 @Injectable({ providedIn: 'root' })
 export class ProcedimentoService {
-  private readonly API = 'http://localhost:8080';
+  private readonly API = environment.apiUrl;
   private readonly http = inject(HttpClient);
 
   private allCache$?: Observable<Procedimento[]>;

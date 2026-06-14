@@ -5,10 +5,11 @@ import { map, shareReplay } from 'rxjs/operators';
 import { Paciente } from '../models/paciente.model';
 import { Page, PageQuery } from '../models/page.model';
 import { PagedCollection } from '../core/paged-collection';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PacienteService {
-  private readonly API = 'http://localhost:8080';
+  private readonly API = environment.apiUrl;
   private readonly http = inject(HttpClient);
 
   readonly lista = new PagedCollection<Paciente>((query) => this.getPage(query));

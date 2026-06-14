@@ -5,10 +5,11 @@ import { map, shareReplay } from 'rxjs/operators';
 import { Dentista } from '../models/dentista.model';
 import { Page, PageQuery } from '../models/page.model';
 import { PagedCollection } from '../core/paged-collection';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DentistaService {
-  private readonly API = 'http://localhost:8080';
+  private readonly API = environment.apiUrl;
   private readonly http = inject(HttpClient);
 
   readonly lista = new PagedCollection<Dentista>((query) => this.getPage(query));

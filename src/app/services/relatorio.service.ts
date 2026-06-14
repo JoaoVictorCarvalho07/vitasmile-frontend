@@ -9,10 +9,11 @@ import {
   RelatorioFiltro,
   RelatorioResumo,
 } from '../models/relatorio.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class RelatorioService {
-  private readonly API = 'http://localhost:8080';
+  private readonly API = environment.apiUrl;
   private readonly http = inject(HttpClient);
 
   buscarConsultas(filtro: RelatorioFiltro, page: number, size: number): Observable<Page<Consulta>> {
