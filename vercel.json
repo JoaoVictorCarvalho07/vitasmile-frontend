@@ -1,0 +1,5 @@
+{
+  "buildCommand": "sed -i \"s|__API_URL__|$API_URL|g\" src/environments/environment.prod.ts && npm run build",
+  "outputDirectory": "dist/vita-frontend/browser",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
