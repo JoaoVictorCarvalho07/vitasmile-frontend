@@ -133,6 +133,12 @@ body {
     color: var(--success);
     &:hover { background: #bbf7d0; }
   }
+
+  &--edit {
+    background: var(--indigo-50);
+    color: var(--indigo-700);
+    &:hover { background: #e0e7ff; }
+  }
 }
 
 // ---- Modal ----

@@ -79,6 +79,11 @@
               <td>{{ c.valor != null ? (c.valor | currency:'BRL') : '—' }}</td>
               <td class="consultas__actions">
                 @if (c.status === 'AGENDADA') {
+                  @if (isAdmin) {
+                    <button class="btn-action btn-action--edit" (click)="abrirModalEditar(c)">
+                      Editar
+                    </button>
+                  }
                   <button class="btn-action btn-action--danger" (click)="abrirModalCancelar(c)">
                     Cancelar
                   </button>
@@ -112,7 +117,7 @@
 @if (showModalNova) {
   <div class="modal-overlay" (click)="fecharModalNova()">
     <div class="modal" (click)="$event.stopPropagation()">
-      <h2 class="modal__title">Nova consulta</h2>
+      <h2 class="modal__title">{{ consultaEditandoId ? 'Editar consulta' : 'Nova consulta' }}</h2>
 
       <div class="modal__form">
         <div class="modal__field">
@@ -209,7 +214,7 @@
       <div class="modal__footer">
         <button class="btn-ghost" (click)="fecharModalNova()">Cancelar</button>
         <button class="btn-primary" [disabled]="salvando" (click)="salvarConsulta()">
-          {{ salvando ? 'Salvando...' : 'Salvar' }}
+          {{ salvando ? 'Salvando...' : (consultaEditandoId ? 'Salvar alterações' : 'Salvar') }}
         </button>
       </div>
     </div>

@@ -45,6 +45,7 @@ export class ConsultasComponent {
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
   protected readonly isPaciente = this.auth.isPaciente();
   protected readonly isDentista = this.auth.isDentista();
+  protected readonly isAdmin = this.auth.isAdmin();
 
   protected pacientes: Paciente[] = [];
   protected dentistas: Dentista[] = [];
@@ -57,6 +58,7 @@ export class ConsultasComponent {
   filtroData = '';
 
   showModalNova = false;
+  consultaEditandoId: number | null = null;
   novaConsulta: NovaConsultaForm = this.formVazio();
   erroNova = '';
   salvando = false;
@@ -107,7 +109,27 @@ export class ConsultasComponent {
   }
 
   abrirModalNova(): void {
+    this.consultaEditandoId = null;
     this.novaConsulta = this.formVazio();
+    this.procedimentoSelecionadoId = null;
+    this.erroNova = '';
+    this.showModalNova = true;
+  }
+
+  abrirModalEditar(c: Consulta): void {
+    this.consultaEditandoId = c.id;
+    this.novaConsulta = {
+      idPaciente: c.idPaciente ?? null,
+      idDentista: c.idDentista ?? null,
+      descricao: c.descricao,
+      dataInicio: c.dataInicio?.substring(0, 16) ?? '',
+      dataFim: c.dataFim?.substring(0, 16) ?? '',
+      itens: (c.procedimentos ?? []).map((p) => ({
+        idProcedimento: p.idProcedimento ?? 0,
+        nome: p.nome,
+        valor: p.valor,
+      })),
+    };
     this.procedimentoSelecionadoId = null;
     this.erroNova = '';
     this.showModalNova = true;
@@ -155,7 +177,10 @@ export class ConsultasComponent {
       })),
     };
     this.salvando = true;
-    this.consultaService.create(body).subscribe({
+    const requisicao = this.consultaEditandoId
+      ? this.consultaService.editar(this.consultaEditandoId, body)
+      : this.consultaService.create(body);
+    requisicao.subscribe({
       next: () => {
         this.consultaService.invalidateAll();
         this.lista.reload();

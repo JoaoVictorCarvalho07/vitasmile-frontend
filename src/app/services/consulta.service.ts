@@ -41,6 +41,10 @@ export class ConsultaService {
     return this.http.post<Consulta>(`${this.API}/consultas`, body);
   }
 
+  editar(id: number, body: CriarConsultaBody): Observable<Consulta> {
+    return this.http.put<Consulta>(`${this.API}/consultas/${id}`, body);
+  }
+
   cancelar(id: number, motivo: string): Observable<Consulta> {
     const params = new HttpParams().set('motivo', motivo);
     return this.http.post<Consulta>(`${this.API}/consultas/${id}/cancelar`, null, { params });

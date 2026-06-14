@@ -1,6 +1,7 @@
 export type StatusConsulta = 'AGENDADA' | 'CANCELADA' | 'FINALIZADA';
 
 export interface ItemConsulta {
+  idProcedimento?: number;
   nome: string;
   valor: number;
 }
@@ -15,7 +16,9 @@ export interface Consulta {
   status: StatusConsulta;
   valor?: number;
   procedimentos?: ItemConsulta[];
+  idPaciente?: number;
   nomePaciente?: string;
+  idDentista?: number;
   nomeDentista?: string;
   paciente?: { id: number; nome: string };
   dentista?: { id: number; nome: string };
