@@ -10,33 +10,33 @@ export class AuthService {
   private readonly API = environment.apiUrl;
 
   private readonly http: HttpClient = inject(HttpClient);
-  
+
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API}/auth/login`, credentials).pipe(
       tap(res => {
-        sessionStorage.setItem('vitasmile_token', res.token);
-        sessionStorage.setItem('vitasmile_perfil', res.perfil);
-        sessionStorage.setItem('vitasmile_nome', res.NomeUsuario);
+        localStorage.setItem('vitasmile_token', res.token);
+        localStorage.setItem('vitasmile_perfil', res.perfil);
+        localStorage.setItem('vitasmile_nome', res.NomeUsuario);
       })
     );
   }
 
   logout(): void {
-    sessionStorage.removeItem('vitasmile_token');
-    sessionStorage.removeItem('vitasmile_perfil');
-    sessionStorage.removeItem('vitasmile_nome');
+    localStorage.removeItem('vitasmile_token');
+    localStorage.removeItem('vitasmile_perfil');
+    localStorage.removeItem('vitasmile_nome');
   }
 
   getToken(): string | null {
-    return sessionStorage.getItem('vitasmile_token');
+    return localStorage.getItem('vitasmile_token');
   }
 
   getPerfil(): string | null {
-    return sessionStorage.getItem('vitasmile_perfil');
+    return localStorage.getItem('vitasmile_perfil');
   }
 
   getNome(): string | null {
-    return sessionStorage.getItem('vitasmile_nome');
+    return localStorage.getItem('vitasmile_nome');
   }
 
   isLoggedIn(): boolean {
