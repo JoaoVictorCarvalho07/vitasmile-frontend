@@ -1,0 +1,92 @@
+<div class="landing">
+
+  <header class="landing__topbar">
+    <div class="landing__inner landing__topbar-inner">
+      <div class="landing__brand">
+        <span class="landing__brand-vita">Vita</span><span class="landing__brand-smile">Smile</span>
+      </div>
+      <button class="btn-primary" (click)="entrar()">Entrar</button>
+    </div>
+  </header>
+
+  <section class="landing__hero">
+    <div class="landing__inner landing__hero-inner">
+      <div class="landing__hero-text">
+        <h1 class="landing__title">Cuidando do seu sorriso com excelência</h1>
+        <p class="landing__subtitle">
+          Clínica odontológica completa: do check-up de rotina aos tratamentos especializados,
+          com uma equipe pronta para cuidar de você e da sua família.
+        </p>
+        <div class="landing__hero-actions">
+          <button class="btn-primary landing__cta" (click)="entrar()">Acessar o sistema</button>
+          <button class="btn-ghost landing__cta" (click)="abrirWhatsapp()">Agendar pelo WhatsApp</button>
+        </div>
+      </div>
+
+      <div class="landing__hero-card">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2c-2.5 0-3.5 1-5.5 1S4 2.5 4 6c0 4 1.5 6 2.5 9.5S8 22 9.5 22s1-3 2.5-3 1.5 3 2.5 3 1.5-3 2.5-6.5S20 10 20 6c0-3.5-.5-3-2.5-3S14.5 2 12 2z"/>
+        </svg>
+        <p class="landing__hero-card-text">Saúde bucal de confiança,<br />perto de você.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing__section">
+    <div class="landing__inner">
+      <h2 class="landing__section-title">Por que escolher a VitaSmile</h2>
+      <div class="landing__cards">
+        @for (d of diferenciais; track d.titulo) {
+          <div class="landing__card">
+            <h3 class="landing__card-title">{{ d.titulo }}</h3>
+            <p class="landing__card-text">{{ d.descricao }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="landing__section landing__section--alt">
+    <div class="landing__inner">
+      <h2 class="landing__section-title">Especialidades</h2>
+      <div class="landing__especialidades">
+        @for (e of especialidades; track e) {
+          <span class="landing__esp">{{ e }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="landing__section">
+    <div class="landing__inner landing__contato">
+      <h2 class="landing__section-title">Contato</h2>
+      <div class="landing__contato-grid">
+        <div class="landing__contato-item">
+          <span class="landing__contato-label">WhatsApp</span>
+          <span>{{ whatsappLabel }}</span>
+        </div>
+        <div class="landing__contato-item">
+          <span class="landing__contato-label">E-mail</span>
+          <span>{{ email }}</span>
+        </div>
+        <div class="landing__contato-item">
+          <span class="landing__contato-label">Endereço</span>
+          <span>{{ endereco }}</span>
+        </div>
+        <div class="landing__contato-item">
+          <span class="landing__contato-label">Atendimento</span>
+          <span>{{ horario }}</span>
+        </div>
+      </div>
+      <button class="btn-primary landing__cta" (click)="abrirWhatsapp()">Falar no WhatsApp</button>
+    </div>
+  </section>
+
+  <footer class="landing__footer">
+    <div class="landing__inner landing__footer-inner">
+      <span>VitaSmile · Clínica Odontológica</span>
+      <button class="landing__footer-link" (click)="entrar()">Entrar no sistema</button>
+    </div>
+  </footer>
+
+</div>

@@ -4,7 +4,11 @@ import { authGuard, roleGuard } from './core/auth.guard';
 import { AuthService } from './services/auth.service';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./pages/landing/landing').then(m => m.LandingComponent),
+  },
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then(m => m.LoginPage),
