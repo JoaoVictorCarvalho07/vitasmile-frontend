@@ -14,29 +14,29 @@ export class AuthService {
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API}/auth/login`, credentials).pipe(
       tap(res => {
-        localStorage.setItem('vitasmile_token', res.token);
-        localStorage.setItem('vitasmile_perfil', res.perfil);
-        localStorage.setItem('vitasmile_nome', res.NomeUsuario);
+        sessionStorage.setItem('vitasmile_token', res.token);
+        sessionStorage.setItem('vitasmile_perfil', res.perfil);
+        sessionStorage.setItem('vitasmile_nome', res.NomeUsuario);
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('vitasmile_token');
-    localStorage.removeItem('vitasmile_perfil');
-    localStorage.removeItem('vitasmile_nome');
+    sessionStorage.removeItem('vitasmile_token');
+    sessionStorage.removeItem('vitasmile_perfil');
+    sessionStorage.removeItem('vitasmile_nome');
   }
 
   getToken(): string | null {
-    return localStorage.getItem('vitasmile_token');
+    return sessionStorage.getItem('vitasmile_token');
   }
 
   getPerfil(): string | null {
-    return localStorage.getItem('vitasmile_perfil');
+    return sessionStorage.getItem('vitasmile_perfil');
   }
 
   getNome(): string | null {
-    return localStorage.getItem('vitasmile_nome');
+    return sessionStorage.getItem('vitasmile_nome');
   }
 
   isLoggedIn(): boolean {
