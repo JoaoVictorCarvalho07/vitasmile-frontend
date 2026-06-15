@@ -23,8 +23,9 @@ interface NovaConsultaForm {
   idPaciente: number | null;
   idDentista: number | null;
   descricao: string;
-  dataInicio: string;
-  dataFim: string;
+  data: string;
+  horaInicio: string;
+  horaFim: string;
   itens: ItemForm[];
 }
 
@@ -122,8 +123,9 @@ export class ConsultasComponent {
       idPaciente: c.idPaciente ?? null,
       idDentista: c.idDentista ?? null,
       descricao: c.descricao,
-      dataInicio: c.dataInicio?.substring(0, 16) ?? '',
-      dataFim: c.dataFim?.substring(0, 16) ?? '',
+      data: c.dataInicio?.substring(0, 10) ?? '',
+      horaInicio: c.dataInicio?.substring(11, 16) ?? '',
+      horaFim: c.dataFim?.substring(11, 16) ?? '',
       itens: (c.procedimentos ?? []).map((p) => ({
         idProcedimento: p.idProcedimento ?? 0,
         nome: p.nome,
@@ -160,8 +162,8 @@ export class ConsultasComponent {
   }
 
   salvarConsulta(): void {
-    const { idPaciente, idDentista, descricao, dataInicio, dataFim } = this.novaConsulta;
-    if (!idPaciente || (!this.isDentista && !idDentista) || !descricao || !dataInicio || !dataFim) {
+    const { idPaciente, idDentista, descricao, data, horaInicio, horaFim } = this.novaConsulta;
+    if (!idPaciente || (!this.isDentista && !idDentista) || !descricao || !data || !horaInicio || !horaFim) {
       this.erroNova = 'Preencha todos os campos.';
       return;
     }
@@ -169,8 +171,8 @@ export class ConsultasComponent {
       idPaciente,
       idDentista,
       descricao,
-      dataInicio,
-      dataFim,
+      dataInicio: `${data}T${horaInicio}`,
+      dataFim: `${data}T${horaFim}`,
       procedimentos: this.novaConsulta.itens.map((i) => ({
         idProcedimento: i.idProcedimento,
         valor: Number(i.valor) || 0,
@@ -250,8 +252,9 @@ export class ConsultasComponent {
       idPaciente: null,
       idDentista: null,
       descricao: '',
-      dataInicio: '',
-      dataFim: '',
+      data: '',
+      horaInicio: '',
+      horaFim: '',
       itens: [],
     };
   }

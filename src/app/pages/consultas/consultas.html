@@ -151,14 +151,19 @@
           ></textarea>
         </div>
 
+        <div class="modal__field">
+          <label class="modal__label">Data da consulta</label>
+          <input class="modal__input" type="date" [(ngModel)]="novaConsulta.data" />
+        </div>
+
         <div class="modal__row">
           <div class="modal__field">
-            <label class="modal__label">Data início</label>
-            <input class="modal__input" type="datetime-local" [(ngModel)]="novaConsulta.dataInicio" />
+            <label class="modal__label">Hora início</label>
+            <input class="modal__input" type="time" [(ngModel)]="novaConsulta.horaInicio" />
           </div>
           <div class="modal__field">
-            <label class="modal__label">Data fim</label>
-            <input class="modal__input" type="datetime-local" [(ngModel)]="novaConsulta.dataFim" />
+            <label class="modal__label">Hora fim</label>
+            <input class="modal__input" type="time" [(ngModel)]="novaConsulta.horaFim" />
           </div>
         </div>
 
