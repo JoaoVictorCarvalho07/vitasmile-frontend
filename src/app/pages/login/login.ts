@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AuthRequest } from '../../models/auth.model';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -24,12 +25,14 @@ export class LoginPage {
     this.loading = true;
     this.error = '';
 
-    this.authService.login(this.credentials).subscribe({
-      next: () => this.router.navigate(['/dashboard']),
-      error: () => {
-        this.error = 'E-mail ou senha inválidos.';
-        this.loading = false;
-      },
-    });
+    this.authService
+      .login(this.credentials)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: () => this.router.navigate(['/dashboard']),
+        error: (err) => {
+          if (err.status !== 0) this.error = 'E-mail ou senha inválidos.';
+        },
+      });
   }
 }

@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, EMPTY, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ToastService } from './toast.service';
 
@@ -21,7 +21,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         toast.erro(
           'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.',
         );
-        return EMPTY;
       }
       const tokenExpirado = err.status === 401 && err.headers?.get('X-Token-Expired') === 'true';
       if (tokenExpirado) {
